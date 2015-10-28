@@ -60,3 +60,18 @@ public:
     // 增加一个引用计数
     void AddRefLog(LogItem* item);
 };
+
+#define LOG_IMPLE(_NAME_, _LEVEL_) \
+static void __inline _NAME_ (const char* __mod__, const char* __title__, const char* __fmt__, ...) {\
+    va_list list;\
+    va_start(list, __fmt__);\
+    CString msg;\
+    msg.Format("%s\t%s\t", __mod__, __title__);\
+    msg.AppendFormatV(__fmt__, list);\
+    va_end(list);\
+    CLogMgr::Instance().AppendLog(_LEVEL_, msg);\
+}
+
+LOG_IMPLE(LogError, LC_LOG_ERROR);
+LOG_IMPLE(LogInfo, LC_LOG_INFO);
+LOG_IMPLE(LogWarning, LC_LOG_WARN);

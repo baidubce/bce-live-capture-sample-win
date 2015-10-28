@@ -59,7 +59,8 @@ enum _tag_LC_CONSTANTS {
     LC_MAX_BCE_SECRET_ACCESS_KEY_LEN = 128,
     LC_MAX_VIDEO_INPUT = 2,
     LC_MAX_AUDIO_INPUT = 2,
-    LC_MAX_RTMP_KEY_LEN = 64
+    LC_MAX_RTMP_KEY_LEN = 64,
+    LC_MAX_BUFFER = 128
 } LC_CONSTANTS;
 
 /**
@@ -247,6 +248,41 @@ struct _tag_lc_recording {
     int periodInMinute;
 } lc_recording_t;
 
+
+typedef
+enum _tag_LC_IMAGE_TYPE {
+    JPG = 0,
+    PNG
+} LC_IMAGE_TYPE;
+
+typedef
+enum _tag_LC_THUMBNAIL_MODE {
+    MANUAL = 0,
+    AUTO
+} LC_THUMBNAIL_MODE;
+
+typedef
+struct _tag_lc_thumbnail_target {
+    LC_IMAGE_TYPE format;
+    LC_VIDEO_SIZING sizingPolicy;
+    int widthInPixel;
+    int heightInPixel;
+} lc_thumbnail_target_t;
+
+typedef
+struct _tag_lc_thumbnail_capture {
+    LC_THUMBNAIL_MODE mode;
+    long startTimeInSecond;
+    long endTimeInSecond;
+    long intervalInSecond;
+} lc_thumbnail_capture_t;
+
+typedef
+struct _tag_lc_thumbnail {
+    lc_thumbnail_target_t target;
+    lc_thumbnail_capture_t capture;
+} lc_thumbnail_t;
+
 /**
 * BCE preset parameters
 **/
@@ -261,6 +297,7 @@ struct _tag_lc_preset {
     lc_recording_t recording;
     long long createTime;
     char userId[LC_MAX_USER_ID_LEN];
+    lc_thumbnail_t thumbnail;
 } lc_preset_t;
 
 /**
@@ -420,6 +457,7 @@ struct _tag_lc_session_config {
     char presetName[LC_MAX_PRESET_NAME];
     lc_target_t target;
     lc_session_publish_config_t publish;
+    char notification [LC_MAX_BUFFER];
 } lc_session_config_t;
 
 typedef
@@ -457,9 +495,13 @@ struct _tag_lc_session_error {
 
 typedef
 struct _tag_lc_session_records {
-    int count;
-    char** keys;
+    char keyPrefix[LC_MAX_BUFFER];
 } lc_session_records_t;
+typedef
+struct _tag_lc_session_thumbnails {
+    char keyPrefix[LC_MAX_BUFFER];
+} lc_session_thumbnail_t;
+
 
 typedef
 struct _tag_lc_session_publish {
@@ -484,6 +526,8 @@ struct _tag_lc_session {
     LC_SESSION_STREAMING_STATUS streamingStatus;
     lc_session_error_t error;
     lc_session_records_t record;
+    lc_session_thumbnail_t thumbnail;
+    char notification[LC_MAX_BUFFER];
 } lc_session_t;
 
 typedef

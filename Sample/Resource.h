@@ -11,6 +11,13 @@
 #define IDD_SESSION                     131
 #define IDD_LOG_DIALOG                  132
 #define IDD_DIALOG_CHOOSE_PRESET        134
+#define IDB_BITMAP_VOLUME_BACKGROUND    135
+#define IDB_BITMAP_VOLUME_FOREGROUND    136
+#define IDB_BITMAP_VOLUME_SLIDER        137
+#define IDB_BITMAP_VOLUME_OFF           138
+#define IDB_BITMAP_VOLUME_ON            139
+#define IDD_DIALOG1                     140
+#define IDD_DIALOG_PLAYER               140
 #define IDC_COMBO_AUDIO                 1000
 #define IDC_COMBO_VIDEO                 1001
 #define IDC_BUTTON_SELECT_PATH          1002
@@ -60,10 +67,10 @@
 #define IDM_LOG                         32774
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        135
+#define _APS_NEXT_RESOURCE_VALUE        141
 #define _APS_NEXT_COMMAND_VALUE         32776
 #define _APS_NEXT_CONTROL_VALUE         1039
 #define _APS_NEXT_SYMED_VALUE           101

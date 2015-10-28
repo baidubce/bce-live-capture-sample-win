@@ -77,8 +77,8 @@ IDR_MAINFRAME           ICON                    "res\\Tools.ico"
 // Dialog
 //
 
-IDD_TOOLS_DIALOG DIALOGEX 0, 0, 344, 327
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION
+IDD_TOOLS_DIALOG DIALOGEX 0, 0, 786, 326
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "SDK Sample"
 MENU IDR_MENU1
@@ -173,6 +173,13 @@ BEGIN
     PUSHBUTTON      "取消",IDC_BUTTON_GIVEUP,117,46,50,14
 END
 
+IDD_DIALOG_PLAYER DIALOGEX 0, 0, 204, 161
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPCHILDREN | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_TOOLWINDOW
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -223,7 +230,7 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_TOOLS_DIALOG, DIALOG
     BEGIN
-        BOTTOMMARGIN, 295
+        BOTTOMMARGIN, 294
     END
 
     IDD_SESSION, DIALOG
@@ -235,6 +242,14 @@ BEGIN
     BEGIN
         RIGHTMARGIN, 316
         BOTTOMMARGIN, 185
+    END
+
+    IDD_DIALOG_PLAYER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 197
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 154
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -254,6 +269,17 @@ BEGIN
     MENUITEM "日志",                          IDM_LOG
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP_VOLUME_BACKGROUND BITMAP                  "res\\Volume_Back.bmp"
+IDB_BITMAP_VOLUME_FOREGROUND BITMAP                  "res\\Volume_Fore.bmp"
+IDB_BITMAP_VOLUME_SLIDER BITMAP                  "res\\Volume_thumb.bmp"
+IDB_BITMAP_VOLUME_OFF   BITMAP                  "res\\VolumeOff.bmp"
+IDB_BITMAP_VOLUME_ON    BITMAP                  "res\\VolumeOn.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

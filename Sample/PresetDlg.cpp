@@ -52,6 +52,13 @@ static const PropertyNameValue s_video_sizingpolicy[] = {
     {"stretch", STRETCH},
     NULL,
 };
+
+static const PropertyNameValue s_image_type[] = {
+    {"jpg", JPG},
+    {"png", PNG},
+    NULL,
+};
+
 static const PropertyNameValue s_bool[] = {
     {"FALSE", 0},
     {"TRUE", 1},
@@ -262,7 +269,108 @@ static const PropertyItem s_preset_audio_items[] = {
     { 0,}
 };
 
+static const PropertyItem s_preset_thumbnail_target_items[] = {
+    {
+        "图片格式",
+        offsetof(lc_preset_t, thumbnail) + offsetof(lc_thumbnail_t, target) + offsetof(lc_thumbnail_target_t, format),
+        sizeof(LC_IMAGE_TYPE) ,
+        read_int,
+        write_int,
+        NULL,
+        s_image_type,
+        NULL
+    },
+    {
+        "缩放方式",
+        offsetof(lc_preset_t, thumbnail) + offsetof(lc_thumbnail_t, target) + offsetof(lc_thumbnail_target_t, sizingPolicy),
+        sizeof(LC_VIDEO_SIZING) ,
+        read_int,
+        write_int,
+        NULL,
+        s_video_sizingpolicy,
+        NULL
+    },
+    {
+        "宽",
+        offsetof(lc_preset_t, thumbnail) + offsetof(lc_thumbnail_t, target) + offsetof(lc_thumbnail_target_t, widthInPixel),
+        sizeof(int) ,
+        read_int,
+        write_int,
+        NULL,
+        NULL,
+        NULL
+    },
+    {
+        "高",
+        offsetof(lc_preset_t, thumbnail) + offsetof(lc_thumbnail_t, target) + offsetof(lc_thumbnail_target_t, heightInPixel),
+        sizeof(int) ,
+        read_int,
+        write_int,
+        NULL,
+        NULL,
+        NULL
+    },
 
+    { 0,}
+};
+
+static const PropertyNameValue s_thumbnail_mode[] = {
+    {"手动", MANUAL},
+    {"自动", AUTO },
+    NULL,
+};
+
+static const PropertyItem s_preset_thumbnail_capture_items[] = {
+    {
+        "模式",
+        offsetof(lc_preset_t, thumbnail) + offsetof(lc_thumbnail_t, capture) + offsetof(lc_thumbnail_capture_t, mode),
+        sizeof(LC_THUMBNAIL_MODE) ,
+        read_int,
+        write_int,
+        NULL,
+        s_thumbnail_mode,
+        NULL
+    },
+    {
+        "开始时间(秒)",
+        offsetof(lc_preset_t, thumbnail) + offsetof(lc_thumbnail_t, capture) + offsetof(lc_thumbnail_capture_t, startTimeInSecond),
+        sizeof(long) ,
+        read_int,
+        write_int,
+        NULL,
+        NULL,
+        NULL
+    },
+    {
+        "结束时间(秒)",
+        offsetof(lc_preset_t, thumbnail) + offsetof(lc_thumbnail_t, capture) + offsetof(lc_thumbnail_capture_t, endTimeInSecond),
+        sizeof(long) ,
+        read_int,
+        write_int,
+        NULL,
+        NULL,
+        NULL
+    },
+    {
+        "时间间隔(秒)",
+        offsetof(lc_preset_t, thumbnail) + offsetof(lc_thumbnail_t, capture) + offsetof(lc_thumbnail_capture_t, intervalInSecond),
+        sizeof(long) ,
+        read_int,
+        write_int,
+        NULL,
+        NULL,
+        NULL
+    },
+    { 0,}
+};
+
+static const PropertyItem s_preset_thumbnail_items[] = {
+    {"格式", 0, 0, NULL, NULL, NULL, NULL, s_preset_thumbnail_target_items},
+    {"策略", 0, 0, NULL, NULL, NULL, NULL, s_preset_thumbnail_capture_items},
+    { 0,}
+};
+
+// preset property map
 static const PropertyItem s_preset_items[] = {
     {
         "模板名称",
@@ -299,7 +407,7 @@ static const PropertyItem s_preset_items[] = {
         NULL,
         NULL
     },
-
+    {"缩略图", 0, 0, NULL, NULL, NULL, NULL, s_preset_thumbnail_items},
     { 0,}
 };
 

@@ -40,12 +40,47 @@
 
 #define DELETE_EXCEPTION(e) do { if(e) { e->Delete(); } } while (0)
 
+#include <glib.h>
+#include "LogMgr.h"
 
+struct ILock {
+    virtual void Lock() = 0;
+    virtual void Unlock() = 0;
+};
 
+class CScopedLock {
+private:
+    ILock* m_pLock;
 
+public:
+    CScopedLock(ILock* plock)
+        : m_pLock(plock) {
+        m_pLock->Lock();
+    }
+    ~CScopedLock() {
+        m_pLock->Unlock();
+    }
+};
 
+class CMutexLock: public ILock {
+private:
+    GMutex m_lock;
+public:
+    CMutexLock() {
+        g_mutex_init(&m_lock);
+    }
+    ~CMutexLock() {
+        g_mutex_clear(&m_lock);
+    }
+public:
+    void Lock() {
+        g_mutex_lock(&m_lock);
+    }
 
-
+    void Unlock() {
+        g_mutex_unlock(&m_lock);
+    }
+};
 
 #ifdef _UNICODE
 #if defined _M_IX86

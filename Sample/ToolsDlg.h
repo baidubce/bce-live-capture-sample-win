@@ -3,6 +3,7 @@
 #include "ToolsModel.h"
 #include "live_capture.h"
 #include <vector>
+#include "DialogPlayer.h"
 
 class CLogDlg;
 class CSessionDlg;
@@ -51,7 +52,12 @@ public:
     afx_msg void OnBnClickedButtonSelectSession();
     afx_msg void OnBnClickedRadioExistingSession();
     afx_msg void OnCbnSelchangeComboVideoInfo();
+    afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnCbnSelchangeComboVideo();
+private:
+    static void LC_API sample_callback(lc_handle_t handle, LC_SAMPLE_TYPE type, void* sample,
+                                       void* usr_data);
+    void OnSample(lc_handle_t handle, LC_SAMPLE_TYPE type, void* sample);
 
 protected:
     void OnOK();
@@ -75,6 +81,8 @@ private:
     CLogDlg* m_pLogDlg;
     CPresetDlg* m_pPresetDlg;
     CSessionDlg* m_pSessionDlg;
+    CDialogPlayer m_wndPlayer;
+
     CEdit m_edtExistingSession;
     CEdit m_edtStatis;
     CEdit m_EdtLocalPath;
@@ -108,4 +116,7 @@ private:
     CString m_strConfigFile;
     CString& GetConfigFile();
     std::vector<lc_video_info_t> m_vecVideoInfos;
+public:
+    void DockPlayer(CDialogPlayer* player);
+    void UndockPlayer(CDialogPlayer* player);
 };

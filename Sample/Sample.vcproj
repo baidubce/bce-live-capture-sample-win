@@ -10,7 +10,7 @@
 	SccLocalPath="Svn"
 	SccProvider="SubversionScc"
 	Keyword="MFCProj"
-	TargetFrameworkVersion="196613"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -49,7 +49,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../include"
+				AdditionalIncludeDirectories="../include;../thirdsrc/include;&quot;../thirdsrc/include/glib-2.0&quot;;&quot;../include/glib-2.0&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXDLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -72,12 +72,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="live_capture.lib"
+				AdditionalDependencies="live_capture.lib glib-2.0.lib gobject-2.0.lib gstreamer-0.10.lib gstapp-0.10.lib gstinterfaces-0.10.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../lib"
+				AdditionalLibraryDirectories="../lib;../thirdsrc/lib"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -133,7 +135,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="../include"
+				AdditionalIncludeDirectories="../include;../thirdsrc/include;&quot;../thirdsrc/include/glib-2.0&quot;;&quot;../include/glib-2.0&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_AFXDLL "
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
@@ -156,13 +158,15 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="live_capture.lib"
+				AdditionalDependencies="live_capture.lib glib-2.0.lib gobject-2.0.lib gstreamer-0.10.lib gstapp-0.10.lib gstinterfaces-0.10.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../lib"
+				AdditionalLibraryDirectories="../lib;../thirdsrc/lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -197,7 +201,35 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\BitmapButtonEx.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ChoosePresetDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\common.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CProgressCtrlEx.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogPlayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DuBitmap.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GstPipelineBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GstPlayer.cpp"
 				>
 			</File>
 			<File
@@ -206,6 +238,14 @@
 			</File>
 			<File
 				RelativePath=".\LogMgr.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PlayScreen.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PPM.cpp"
 				>
 			</File>
 			<File
@@ -252,6 +292,10 @@
 				RelativePath=".\ToolsModel.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\Volume.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -259,7 +303,35 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\BitmapButtonEx.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ChoosePresetDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\common.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CProgressCtrlEx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogPlayer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DuBitmap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GstPipelineBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GstPlayer.h"
 				>
 			</File>
 			<File
@@ -268,6 +340,14 @@
 			</File>
 			<File
 				RelativePath=".\LogMgr.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PlayScreen.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PPM.h"
 				>
 			</File>
 			<File
@@ -306,6 +386,10 @@
 				RelativePath=".\ToolsModel.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Volume.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -322,6 +406,26 @@
 			</File>
 			<File
 				RelativePath=".\res\Tools.rc2"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Volume_Back.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Volume_Fore.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Volume_thumb.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\VolumeOff-Large.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\VolumeOn-Large.bmp"
 				>
 			</File>
 		</Filter>

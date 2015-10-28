@@ -111,10 +111,24 @@ static const PropertyItem s_session_error_items[] = {
 
 static const PropertyItem s_session_record_items[] = {
     {
-        "文件列表",
-        offsetof(lc_session_t, record) + offsetof(lc_session_records_t, count),
-        sizeof(int) + sizeof(char**),
-        read_string_array,
+        "文件前缀",
+        offsetof(lc_session_t, record) + offsetof(lc_session_records_t, keyPrefix),
+        LC_MAX_BUFFER,
+        read_string,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+    },
+    {0,}
+};
+
+static const PropertyItem s_session_thumbnail_items[] = {
+    {
+        "文件前缀",
+        offsetof(lc_session_t, thumbnail) + offsetof(lc_session_thumbnail_t, keyPrefix),
+        LC_MAX_BUFFER,
+        read_string,
         NULL,
         NULL,
         NULL,
@@ -236,8 +250,18 @@ static const PropertyItem s_session_items[] = {
         NULL
     },
     {"错误信息", 0, 0, NULL, NULL, NULL, NULL, s_session_error_items},
-    {"文件", 0, 0, NULL, NULL, NULL, NULL, s_session_record_items},
-
+    {"录制文件", 0, 0, NULL, NULL, NULL, NULL, s_session_record_items},
+    {"缩略图", 0, 0, NULL, NULL, NULL, NULL, s_session_thumbnail_items},
+    {
+        "状态通知",
+        offsetof(lc_session_t, notification),
+        LC_MAX_BUFFER,
+        read_string,
+        write_string,
+        NULL,
+        NULL,
+        NULL
+    },
     { 0,}
 };
 
