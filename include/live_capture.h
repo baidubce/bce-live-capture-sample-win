@@ -60,7 +60,8 @@ enum _tag_LC_CONSTANTS {
     LC_MAX_VIDEO_INPUT = 2,
     LC_MAX_AUDIO_INPUT = 2,
     LC_MAX_RTMP_KEY_LEN = 64,
-    LC_MAX_BUFFER = 128
+    LC_MAX_BUFFER = 128,
+    LC_MAX_NOTIFICATION_NAME_LEN = 64
 } LC_CONSTANTS;
 
 /**
@@ -290,6 +291,7 @@ typedef
 struct _tag_lc_preset {
     char presetName[LC_MAX_PRESET_NAME];
     char description[LC_MAX_PRESET_DESC];
+    bool forwardOnly;
     lc_audio_output_t audio;
     lc_video_output_t video;
     lc_hls_config_t hls;
@@ -396,6 +398,9 @@ lc_log_callback_t LC_API lc_log_set_callback(lc_log_callback_t callback);
 
 //////////////////////////////////////////////////////////////////////////
 // Preset API
+
+LC_CODE LC_API lc_preset_init(lc_preset_t* preset);
+
 
 /**
 * create a new live preset
@@ -549,6 +554,7 @@ struct _tag_lc_config {
     lc_session_config_t session;
 } lc_config_t;
 
+LC_CODE LC_API lc_session_config_init(lc_session_config_t* cfg);
 
 /**
 * create a new live session
@@ -675,6 +681,64 @@ int LC_API lc_audio_device_get_count();
 * return: result code; LC_OK: success, others: failed
 **/
 LC_CODE LC_API lc_audio_device_get_device(int index, lc_audio_device_t* device);
+
+/**
+* session notification
+* name:     the unique notification name
+* endpoint: the endpoint to receive notification
+**/
+typedef
+struct  _tag_lc_notification {
+    char name[LC_MAX_NOTIFICATION_NAME_LEN];
+    char endpoint[LC_MAX_URL_LEN];
+} lc_notification_t;
+
+/**
+* notification list
+* count: number of notifications
+* list:  array of notifications
+**/
+typedef
+struct _tag_lc_notification_list {
+    int count;
+    lc_notification_t* list;
+} lc_notification_list_t;
+
+/**
+* create one notification
+* nfn: in, the notification information
+* return : LC_OK if succeed, LC_FAIL if failed. call lc_get_last_error() to get detailed error message.
+**/
+LC_CODE LC_API lc_notification_create(lc_notification_t* nfn);
+
+/**
+* query notification by name
+* name, in, the notification name
+* nfn: out, the notification information
+* return : LC_OK if succeed, LC_FAIL if failed. call lc_get_last_error() to get detailed error message.
+**/
+LC_CODE LC_API lc_notification_query(const char* name, lc_notification_t* nfn);
+
+/**
+* delete notification by name
+* name, in, the notification name
+* return : LC_OK if succeed, LC_FAIL if failed. call lc_get_last_error() to get detailed error message.
+**/
+LC_CODE LC_API lc_notification_delete(const char* name);
+
+/**
+* list all notifications
+* list, out, the notification list
+* return : LC_OK if succeed, LC_FAIL if failed. call lc_get_last_error() to get detailed error message.
+**/
+LC_CODE LC_API lc_notification_list(lc_notification_list_t** list);
+
+/**
+* free memory of a notification list
+* list, in, the notification list
+* return : LC_OK
+**/
+LC_CODE LC_API lc_notification_list_free(lc_notification_list_t* list);
 
 /**
 * create a live capture object

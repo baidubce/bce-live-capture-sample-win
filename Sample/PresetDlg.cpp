@@ -392,6 +392,16 @@ static const PropertyItem s_preset_items[] = {
         NULL,
         NULL
     },
+    {
+        "ForwardOnly",
+        offsetof(lc_preset_t, forwardOnly),
+        sizeof(bool) ,
+        read_int,
+        write_int,
+        NULL,
+        s_bool,
+        NULL
+    },
     {" ”∆µ", 0, 0, NULL, NULL, NULL, NULL, s_preset_video_items},
     {"“Ù∆µ", 0, 0, NULL, NULL, NULL, NULL, s_preset_audio_items},
     {"HLS", 0, 0, NULL, NULL, NULL, NULL, s_preset_hls_items},
@@ -539,7 +549,7 @@ void CPresetDlg::OnNcDestroy() {
 }
 void CPresetDlg::OnOK() {}
 void CPresetDlg::OnCancel() {
-    CDialog::OnCancel();
+    OnClose();
 }
 
 void CPresetDlg::OnTvnSelchangedTreePresets(NMHDR* pNMHDR, LRESULT* pResult) {

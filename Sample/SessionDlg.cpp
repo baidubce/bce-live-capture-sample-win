@@ -591,6 +591,7 @@ CMFCPropertyGridProperty* CSessionDlg::CreatePropertyItem(const PropertyItem* pi
 }
 
 void CSessionDlg::UpdateSessionList() {
+    m_treeSession.SetRedraw(FALSE);
     m_treeSession.DeleteAllItems();
 
     if (m_pSessionList) {
@@ -617,6 +618,7 @@ void CSessionDlg::UpdateSessionList() {
     } else {
         CLogMgr::Instance().AppendLog(LC_LOG_ERROR, lc_get_last_error());
     }
+    m_treeSession.SetRedraw(TRUE);
 }
 
 void CSessionDlg::OnNMDblclkTreeSession(NMHDR* pNMHDR, LRESULT* pResult) {

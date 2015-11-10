@@ -91,7 +91,7 @@ void CLogDlg::OnOK() {
 }
 
 void CLogDlg::OnCancel() {
-    CDialog::OnCancel();
+    OnClose();
 }
 
 
