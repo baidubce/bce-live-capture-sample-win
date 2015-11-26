@@ -4,6 +4,8 @@
 #include "live_capture.h"
 #include <vector>
 #include "DialogPlayer.h"
+#include "DialogNotification.h"
+#include "DialogOption.h"
 
 class CLogDlg;
 class CSessionDlg;
@@ -54,6 +56,8 @@ public:
     afx_msg void OnCbnSelchangeComboVideoInfo();
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnCbnSelchangeComboVideo();
+    afx_msg void OnCbnSelchangeComboVideo2();
+
 private:
     static void LC_API sample_callback(lc_handle_t handle, LC_SAMPLE_TYPE type, void* sample,
                                        void* usr_data);
@@ -68,6 +72,8 @@ public:
     void OnLogDlgClosed(CLogDlg* dlg);
     void OnPresetDlgClosed(CPresetDlg* dlg);
     void OnSessionDlgClosed(CSessionDlg* dlg);
+    void OnNotificationDlgClosed(CDialogNotification* dlg);
+    void OnOptionDlgClosed(CDialogOption* dlg);
     void OnStatusChanged(LC_STATUS status, LC_CODE code);
 protected:
 
@@ -81,6 +87,8 @@ private:
     CLogDlg* m_pLogDlg;
     CPresetDlg* m_pPresetDlg;
     CSessionDlg* m_pSessionDlg;
+    CDialogOption* m_pOptionDlg;
+    CDialogNotification* m_pNotificationDlg;
     CDialogPlayer m_wndPlayer;
 
     CEdit m_edtExistingSession;
@@ -109,14 +117,29 @@ private:
     CComboBox m_CmbAudioDevices;
     CComboBox m_CmbPresets;
     CStatic m_staStatus;
-
+    CEdit m_edtVideoX;
+    CEdit m_edtVideoY;
+    CEdit m_edtVideo2X;
+    CEdit m_edtVideo2Y;
+    CEdit m_edtVideoWidth;
+    CEdit m_edtVideoHeight;
+    CEdit m_edtVideo2Width;
+    CEdit m_edtVideo2Height;
+    CButton m_chkVideo2;
+    CComboBox m_cmbVideo2;
+    CComboBox m_cmbVideoInfo2;
     UINT m_uTimer;
 
 private:
-    CString m_strConfigFile;
-    CString& GetConfigFile();
     std::vector<lc_video_info_t> m_vecVideoInfos;
+    std::vector<lc_video_info_t> m_vecVideoInfos2;
 public:
     void DockPlayer(CDialogPlayer* player);
     void UndockPlayer(CDialogPlayer* player);
+    afx_msg void OnOption();
+    afx_msg void OnNotification();
+    afx_msg void OnUpdateNotification(CCmdUI* pCmdUI);
+    afx_msg void OnUpdateOption(CCmdUI* pCmdUI);
+
+    afx_msg void OnBnClickedCheckVideo2();
 };

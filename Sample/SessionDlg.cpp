@@ -3,6 +3,7 @@
 #include "SessionDlg.h"
 #include "ToolsDlg.h"
 #include "LogMgr.h"
+#include "DialogCreateSession.h"
 
 static const PropertyItem s_session_target_items[] = {
     {
@@ -310,6 +311,7 @@ BEGIN_MESSAGE_MAP(CSessionDlg, CDialog)
     ON_NOTIFY(TVN_SELCHANGED, IDC_TREE_SESSION, &CSessionDlg::OnTvnSelchangedTreeSession)
     ON_NOTIFY(NM_RCLICK, IDC_TREE_SESSION, &CSessionDlg::OnNMRClickTreeSession)
     ON_NOTIFY(NM_DBLCLK, IDC_TREE_SESSION, &CSessionDlg::OnNMDblclkTreeSession)
+    ON_BN_CLICKED(IDC_BUTTON_CREATE, &CSessionDlg::OnBnClickedButtonCreate)
 END_MESSAGE_MAP()
 
 
@@ -641,4 +643,11 @@ void CSessionDlg::OnNMDblclkTreeSession(NMHDR* pNMHDR, LRESULT* pResult) {
     }
 
     *pResult = 0;
+}
+
+void CSessionDlg::OnBnClickedButtonCreate() {
+    CDialogCreateSession dlg(this);
+    if( dlg.DoModal() == IDOK ) {
+        UpdateSessionList();
+    }
 }

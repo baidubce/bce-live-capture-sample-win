@@ -9,7 +9,7 @@ typedef enum _tagRTMP_OPTION {
 
 
 typedef enum _tagMODEL_VERSION {
-    VERSION_INT = 0xABCDEF01
+    VERSION_INT = 0xABCDEF02
 } MODEL_VERSION;
 
 class CToolsModel {
@@ -37,6 +37,13 @@ public:
     int m_nVersion;
     int m_RtmpOption;
     BOOL m_SaveLocal;
+
+    BOOL m_bTwoVideoSrc;
+    CString m_VideoDevice2;
+    CPoint m_ptVideo;
+    CPoint m_ptVideo2;
+    CSize m_szVideo;
+    CSize m_szVideo2;
 private:
     BOOL GetStorageFile(CFile* file, BOOL write);
 };

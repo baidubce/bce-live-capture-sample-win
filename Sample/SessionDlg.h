@@ -64,4 +64,5 @@ public:
     afx_msg void OnTvnSelchangedTreeSession(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnNMRClickTreeSession(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnNMDblclkTreeSession(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnBnClickedButtonCreate();
 };

@@ -201,6 +201,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\AES.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\BitmapButtonEx.cpp"
 				>
 			</File>
@@ -213,7 +217,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ConfigMgr.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CProgressCtrlEx.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogCreateSession.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogNotification.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogOption.cpp"
 				>
 			</File>
 			<File
@@ -303,6 +323,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\AES.h"
+				>
+			</File>
+			<File
 				RelativePath=".\BitmapButtonEx.h"
 				>
 			</File>
@@ -315,7 +339,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ConfigMgr.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CProgressCtrlEx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogCreateSession.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogNotification.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogOption.h"
 				>
 			</File>
 			<File
@@ -421,15 +461,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\VolumeOff-Large.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\VolumeOff.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\VolumeOn-Large.bmp"
 				>
 			</File>
 			<File
@@ -441,7 +473,7 @@
 	<Globals>
 		<Global
 			Name="RESOURCE_FILE"
-			Value="Tools.rc"
+			Value="Sample.rc"
 		/>
 	</Globals>
 </VisualStudioProject>

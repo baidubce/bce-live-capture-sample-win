@@ -9,9 +9,10 @@
 #define ID_DELETE 0x8001
 
 static const PropertyNameValue s_video_codec_profiles[] = {
-    { "baseline", BASELINE },
-    { "main", MAIN },
-    { "high", HIGH },
+    {"默认", -1},
+    {"baseline", BASELINE},
+    {"main", MAIN},
+    {"high", HIGH},
     { NULL,}
 };
 
@@ -30,10 +31,12 @@ static const PropertyItem s_preset_video_codec_items[] = {
 };
 
 static const PropertyNameValue s_video_codecs[] = {
-    { "H264", H264 },
+    {"默认", -1},
+    {"H264", H264},
     { NULL,}
 };
 static const PropertyNameValue s_video_framerates[] = {
+    {"-1", -1},
     {"10", 1000},
     {"15", 1500},
     {"20", 2000},
@@ -47,6 +50,7 @@ static const PropertyNameValue s_video_framerates[] = {
     { NULL,}
 };
 static const PropertyNameValue s_video_sizingpolicy[] = {
+    {"默认", -1},
     {"keep", KEEP},
     {"shrinkToFit", FIT},
     {"stretch", STRETCH},
@@ -54,12 +58,14 @@ static const PropertyNameValue s_video_sizingpolicy[] = {
 };
 
 static const PropertyNameValue s_image_type[] = {
+    {"默认", -1},
     {"jpg", JPG},
     {"png", PNG},
     NULL,
 };
 
 static const PropertyNameValue s_bool[] = {
+    {"默认", -1},
     {"FALSE", 0},
     {"TRUE", 1},
     NULL,
@@ -190,8 +196,9 @@ static const PropertyItem s_preset_rtmp_items[] = {
 };
 
 static const PropertyNameValue s_valid_recording_formats[] = {
-    { "MP4", MP4 },
-    { "M3U8", M3U8},
+    {"默认", -1},
+    {"MP4", MP4 },
+    {"M3U8", M3U8},
     {NULL,}
 };
 static const PropertyItem s_preset_recording_items[] = {
@@ -219,7 +226,7 @@ static const PropertyItem s_preset_recording_items[] = {
 };
 
 static const PropertyNameValue s_valid_audio_sample_rate[] = {
-    {"0", 0},
+    {"与输入一致", -1},
     {"22050", 22050},
     {"32000", 32000},
     {"44100", 44100},
@@ -229,7 +236,7 @@ static const PropertyNameValue s_valid_audio_sample_rate[] = {
 };
 
 static const PropertyNameValue s_valid_audio_channels[] = {
-    {"0", 0},
+    {"与输入一致", -1},
     {"1", 1},
     {"2", 2},
     {NULL,}
@@ -315,6 +322,7 @@ static const PropertyItem s_preset_thumbnail_target_items[] = {
 };
 
 static const PropertyNameValue s_thumbnail_mode[] = {
+    {"默认", -1},
     {"手动", MANUAL},
     {"自动", AUTO },
     NULL,

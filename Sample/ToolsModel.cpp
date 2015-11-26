@@ -15,7 +15,13 @@ CToolsModel::CToolsModel(void):
     m_Preset(""),
     m_AudioDevice(""),
     m_VideoDevice(""),
-    m_BCESessionId("") {
+    m_BCESessionId(""),
+    m_bTwoVideoSrc(0),
+    m_VideoDevice2(""),
+    m_ptVideo(0, 0),
+    m_ptVideo2(32, 32),
+    m_szVideo(0, 0),
+    m_szVideo2(200, 150) {
     m_nVersion = VERSION_INT;
 }
 
@@ -27,6 +33,119 @@ BOOL CToolsModel::Validate(CString& err) {
     if (m_VideoDevice.IsEmpty()) {
         err = "未设置视频源设备。";
         return FALSE;
+    }
+
+    if (m_bTwoVideoSrc) {
+        if (m_VideoDevice2.IsEmpty()) {
+            err = "未设置视频源设备2。";
+            return FALSE;
+        }
+
+        if (m_ptVideo.x < 0) {
+            err = "主视频水平位置不能小于0。";
+            return FALSE;
+        }
+
+        if (m_ptVideo.y < 0) {
+            err = "主视频垂直位置不能小于0。";
+            return FALSE;
+        }
+
+        if (m_ptVideo.x > 3968) {
+            err = "主视频水平位置不能大于3968。";
+            return FALSE;
+        }
+
+        if (m_ptVideo.y > 2976) {
+            err = "主视频垂直位置不能大于2967。";
+            return FALSE;
+        }
+
+        if (m_ptVideo2.x < 0) {
+            err = "视频2水平位置不能小于0。";
+            return FALSE;
+
+        }
+
+        if (m_ptVideo2.y < 0) {
+            err = "视频2垂直位置不能小于0。";
+            return FALSE;
+
+        }
+
+        if (m_ptVideo2.x > 3968) {
+            err = "视频2水平位置不能大于3968。";
+            return FALSE;
+
+        }
+
+        if (m_ptVideo2.y > 2976) {
+            err = "视频2垂直位置不能大于2967。";
+            return FALSE;
+
+        }
+
+        if (m_szVideo.cx < 0) {
+            err = "主视频宽不能小于0。";
+            return FALSE;
+        }
+
+        if (m_szVideo.cy < 0) {
+            err = "主视频高不能小于0。";
+            return FALSE;
+
+        }
+
+        if (m_szVideo.cx > 0 && m_szVideo.cx < 128) {
+            err = "主视频宽不能小于128。";
+            return FALSE;
+
+        }
+
+        if (m_szVideo.cy > 0 && m_szVideo.cy < 96) {
+            err = "主视频高不能小于96。";
+            return FALSE;
+        }
+
+        if (m_ptVideo.x + m_szVideo.cx > 4096) {
+            err = "主视频水平位置不能超出4096。";
+            return FALSE;
+        }
+
+        if (m_ptVideo.y + m_szVideo.cy > 3072) {
+            err = "主视频垂直位置不能超出3072。";
+            return FALSE;
+        }
+
+        if (m_szVideo2.cx < 0) {
+            err = "视频2宽不能小于0。";
+            return FALSE;
+        }
+
+        if (m_szVideo2.cy < 0) {
+            err = "视频2高不能小于0。";
+            return FALSE;
+        }
+
+        if (m_szVideo2.cx > 0 && m_szVideo2.cx < 128) {
+            err = "视频2宽不能小于128。";
+            return FALSE;
+        }
+
+        if (m_szVideo2.cy > 0 && m_szVideo2.cy < 96) {
+            err = "视频2高不能小于96。";
+            return FALSE;
+        }
+
+        if (m_ptVideo2.x + m_szVideo2.cx > 4096) {
+            err = "视频2水平位置不能超出4096。";
+            return FALSE;
+        }
+
+        if (m_ptVideo2.y + m_szVideo2.cy > 3072) {
+            err = "视频2垂直位置不能超出3072。";
+            return FALSE;
+        }
     }
 
     if (m_AudioDevice.IsEmpty()) {
@@ -97,7 +216,13 @@ BOOL CToolsModel::Validate(CString& err) {
     op m_RtmpOption \
     op m_BCESessionId \
     op m_BCESessionName \
-    op m_UserRTMPUrl
+    op m_UserRTMPUrl \
+    op m_bTwoVideoSrc \
+    op m_VideoDevice2 \
+    op m_ptVideo \
+    op m_ptVideo2 \
+    op m_szVideo \
+    op m_szVideo2
 
 
 void CToolsModel::Serailize() {

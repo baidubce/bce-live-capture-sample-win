@@ -42,6 +42,7 @@
 
 #include <glib.h>
 #include "LogMgr.h"
+#include <afxdhtml.h>
 
 struct ILock {
     virtual void Lock() = 0;
