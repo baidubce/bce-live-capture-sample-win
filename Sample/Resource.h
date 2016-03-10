@@ -22,6 +22,12 @@
 #define IDD_NOTIFICATION                141
 #define IDD_OPTION                      142
 #define IDD_DIALOG_CREATE_SESSION       143
+#define IDD_DISPLAY_CONFIG              144
+#define IDI_ICON_EMP                    145
+#define IDI_ICON_SEL                    146
+#define IDC_CURSOR_SEL                  147
+#define IDI_ICON1                       148
+#define IDI_ICON_DIS                    148
 #define IDC_COMBO_AUDIO                 1000
 #define IDC_COMBO_VIDEO                 1001
 #define IDC_BUTTON_SELECT_PATH          1002
@@ -81,14 +87,19 @@
 #define IDC_COMBO_NOTIFICATION          1047
 #define IDC_EDIT1                       1047
 #define IDC_EDIT_VIDEO_X                1047
+#define IDC_EDIT_X                      1047
 #define IDC_EDIT2                       1048
 #define IDC_EDIT_VIDEO_Y                1048
+#define IDC_EDIT_Y                      1048
 #define IDC_EDIT3                       1049
 #define IDC_EDIT_VIDEO_WIDTH            1049
+#define IDC_EDIT_HEIGHT                 1049
 #define IDC_EDIT4                       1050
 #define IDC_EDIT_VIDEO_HEIGHT           1050
+#define IDC_EDIT_WIDTH                  1050
 #define IDC_EDIT5                       1051
 #define IDC_EDIT_VIDEO2_X               1051
+#define IDC_EDIT_HWND                   1051
 #define IDC_EDIT6                       1052
 #define IDC_EDIT_VIDEO2_Y               1052
 #define IDC_EDIT7                       1053
@@ -96,6 +107,10 @@
 #define IDC_EDIT8                       1054
 #define IDC_EDIT_VIDEO2_HEIGHT          1054
 #define IDC_COMBO_VIDEO2                1055
+#define IDC_BTN_VIDEO_CONFIG            1056
+#define IDC_BTN_VIDEO_CONFIG2           1057
+#define IDC_COMBO_TYPE                  1057
+#define IDC_STATIC_ICON                 1058
 #define IDM_MENU                        32771
 #define IDM_PRESET                      32772
 #define IDM_SESSION                     32773
@@ -109,9 +124,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        144
+#define _APS_NEXT_RESOURCE_VALUE        149
 #define _APS_NEXT_COMMAND_VALUE         32780
-#define _APS_NEXT_CONTROL_VALUE         1056
+#define _APS_NEXT_CONTROL_VALUE         1060
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

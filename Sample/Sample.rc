@@ -71,6 +71,9 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\Tools.ico"
+IDI_ICON_EMP            ICON                    "res\\emp.ico"
+IDI_ICON_SEL            ICON                    "res\\sel.ico"
+IDI_ICON_DIS            ICON                    "res\\dis.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -144,6 +147,8 @@ BEGIN
     EDITTEXT        IDC_EDIT_VIDEO2_HEIGHT,300,63,40,14,ES_AUTOHSCROLL
     LTEXT           "高",IDC_STATIC,288,66,8,8
     LTEXT           "状态",IDC_STATIC_STATUS,211,89,124,8
+    PUSHBUTTON      "配置",IDC_BTN_VIDEO_CONFIG,60,28,137,12
+    PUSHBUTTON      "配置",IDC_BTN_VIDEO_CONFIG2,60,64,137,12
 END
 
 IDD_SESSION DIALOGEX 0, 0, 373, 332
@@ -252,6 +257,29 @@ BEGIN
     COMBOBOX        IDC_COMBO_NOTIFICATION,58,116,196,158,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
 END
 
+IDD_DISPLAY_CONFIG DIALOGEX 0, 0, 195, 125
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "采集桌面配置"
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    COMBOBOX        IDC_COMBO_TYPE,67,5,101,61,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "类型",IDC_STATIC,12,6,33,8
+    LTEXT           "选择窗口",IDC_STATIC,12,33,33,8
+    LTEXT           "指定区域",IDC_STATIC,12,60,33,8
+    EDITTEXT        IDC_EDIT_X,67,57,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_Y,128,57,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_HEIGHT,128,77,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_WIDTH,67,77,40,14,ES_AUTOHSCROLL
+    ICON            "",IDC_STATIC_ICON,67,27,20,20,SS_NOTIFY
+    LTEXT           "X",IDC_STATIC,55,60,9,8
+    LTEXT           "Y",IDC_STATIC,115,60,8,8
+    LTEXT           "宽",IDC_STATIC,54,80,9,8
+    LTEXT           "高",IDC_STATIC,114,80,8,8
+    PUSHBUTTON      "取消",IDC_BUTTON_CANCEL,26,101,50,14
+    DEFPUSHBUTTON   "确认",IDC_BUTTON_OK,117,101,50,14
+    EDITTEXT        IDC_EDIT_HWND,106,30,63,14,ES_AUTOHSCROLL | ES_READONLY
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -347,6 +375,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 166
     END
+
+    IDD_DISPLAY_CONFIG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 188
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 118
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -380,6 +416,13 @@ IDB_BITMAP_VOLUME_FOREGROUND BITMAP                  "res\\Volume_Fore.bmp"
 IDB_BITMAP_VOLUME_SLIDER BITMAP                  "res\\Volume_thumb.bmp"
 IDB_BITMAP_VOLUME_OFF   BITMAP                  "res\\VolumeOff.bmp"
 IDB_BITMAP_VOLUME_ON    BITMAP                  "res\\VolumeOn.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_CURSOR_SEL          CURSOR                  "res\\sel.cur"
 
 /////////////////////////////////////////////////////////////////////////////
 //

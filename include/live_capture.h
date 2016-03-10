@@ -135,9 +135,32 @@ struct _tag_lc_audio_device {
     lc_audio_info_t info;
 } lc_audio_device_t;
 
+typedef
+enum _tag_LC_DISPLAY_TYPE {
+    DISPLAY_FULLSCREEN = 0,
+    DISPLAY_WINDOW,
+    DISPLAY_RECTANGLE
+} LC_DISPLAY_TYPE;
+
+
+typedef
+struct _tag_lc_display_info {
+    LC_DISPLAY_TYPE type;
+    union {
+        unsigned long hwnd;
+        struct {
+            int xpos;
+            int ypos;
+            int width;
+            int height;
+        } rect;
+    } info;
+} lc_display_info_t;
+
 /**
 * video input device information
 * device_name : the device name used to recording video
+* info: depends on device_name; if device_name is a video device,video_info is used, for display, display_info is used.
 * pixel_dst_x : x offset relative to output video
 * pixel_dst_y : y offset relative to output video
 * pixel_width :   width in pixel for this device
@@ -146,7 +169,10 @@ struct _tag_lc_audio_device {
 typedef
 struct _tag_lc_video_input {
     char device_name[LC_MAX_DEVICE_NAME];
-    lc_video_info_t info;
+    union {
+        lc_video_info_t video_info;
+        lc_display_info_t display_info;
+    } info;
     int pixel_dst_x;
     int pixel_dst_y;
     int pixel_width;

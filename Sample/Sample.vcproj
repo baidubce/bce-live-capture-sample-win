@@ -241,7 +241,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DisplayConfigDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DuBitmap.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FindWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FindWindow.h"
 				>
 			</File>
 			<File
@@ -274,6 +286,14 @@
 			</File>
 			<File
 				RelativePath=".\property_grid_helper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RectangleWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RectangleWindow.h"
 				>
 			</File>
 			<File
@@ -363,6 +383,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DisplayConfigDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DuBitmap.h"
 				>
 			</File>
@@ -437,7 +461,23 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\res\dis.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\emp.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Sample.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\res\sel.cur"
+				>
+			</File>
+			<File
+				RelativePath=".\res\sel.ico"
 				>
 			</File>
 			<File

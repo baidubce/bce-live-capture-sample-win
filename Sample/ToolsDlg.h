@@ -52,6 +52,8 @@ public:
     afx_msg void OnUpdateMenuLog(CCmdUI* pCmdUI);
     afx_msg void OnDestroy();
     afx_msg void OnBnClickedButtonSelectSession();
+    afx_msg void OnBnClickedButtonVideoConfig();
+    afx_msg void OnBnClickedButtonVideoConfig2();
     afx_msg void OnBnClickedRadioExistingSession();
     afx_msg void OnCbnSelchangeComboVideoInfo();
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -128,11 +130,16 @@ private:
     CButton m_chkVideo2;
     CComboBox m_cmbVideo2;
     CComboBox m_cmbVideoInfo2;
+    CButton m_btnVideoConfig;
+    CButton m_btnVideoConfig2;
+
     UINT m_uTimer;
 
 private:
     std::vector<lc_video_info_t> m_vecVideoInfos;
     std::vector<lc_video_info_t> m_vecVideoInfos2;
+
+    lc_display_info_t m_arDisplayInfo[2];
 public:
     void DockPlayer(CDialogPlayer* player);
     void UndockPlayer(CDialogPlayer* player);
