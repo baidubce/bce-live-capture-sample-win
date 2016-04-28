@@ -7,20 +7,20 @@
 
 
 typedef struct _tagLogName {
-    const char* Name;
+    LPCTSTR Name;
     LC_LOGLEVEL Level;
 } LogName;
 
 static const LogName s_LogNames[] = {
-    {"DEBUG", LC_LOG_DEBUG},
-    {"INFO", LC_LOG_INFO},
-    {"WARNING", LC_LOG_WARN},
-    {"ERROR", LC_LOG_ERROR},
-    {"FATAL", LC_LOG_FATAL},
+    {_T("DEBUG"), LC_LOG_DEBUG},
+    {_T("INFO"), LC_LOG_INFO},
+    {_T("WARNING"), LC_LOG_WARN},
+    {_T("ERROR"), LC_LOG_ERROR},
+    {_T("FATAL"), LC_LOG_FATAL},
     { NULL, }
 };
 
-const char* LogLevelName(LC_LOGLEVEL level) {
+LPCTSTR LogLevelName(LC_LOGLEVEL level) {
     const LogName* ln = &s_LogNames[0];
 
     while (ln->Name) {
@@ -31,7 +31,7 @@ const char* LogLevelName(LC_LOGLEVEL level) {
         ln ++;
     }
 
-    return "None";
+    return _T("None");
 }
 
 #define MIN_WIDTH 500
@@ -109,7 +109,7 @@ BOOL CLogDlg::OnInitDialog() {
         ln++;
     }
 
-    m_cmbLevels.SelectString(-1, "WARNING");
+    m_cmbLevels.SelectString(-1, _T("WARNING"));
 
     CLogMgr::Instance().SetNotifyHwnd(GetSafeHwnd());
 
@@ -128,8 +128,8 @@ void CLogDlg::OnClose() {
     DestroyWindow();
 }
 void CLogDlg::OnBnClickedButtonSaveas() {
-    CFileDialog cfd(FALSE, "txt", "live_tools_log", OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST,
-                    "*.txt|*.txt|All|*||", this);
+    CFileDialog cfd(FALSE, _T("txt"), _T("live_tools_log"), OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST,
+                    _T("*.txt|*.txt|All|*||"), this);
 
     if (IDOK == cfd.DoModal()) {
         CLogMgr::Instance().SaveAs(cfd.GetPathName());
@@ -154,17 +154,18 @@ void CLogDlg::OnCbnSelchangeComboLevels() {
 
         CLogMgr::Instance().FilterLog(level, log);
         m_edtLog.SetSel(0, -1);
-        m_edtLog.ReplaceSel((LPCSTR)log);
+        m_edtLog.ReplaceSel((LPCTSTR)log);
     }
 }
 
 LRESULT CLogDlg::OnAddMessage(WPARAM wParam, LPARAM lParam) {
+    USES_CONVERSION;
     LogItem* item = reinterpret_cast<LogItem*>(lParam);
 
     m_edtLog.SetSel(-1, -1);
     CString msg;
-    msg.Format("%s\t%s%s", LogLevelName(item->level), item->msg.c_str(), "\r\n");
-    m_edtLog.ReplaceSel((LPCSTR)msg);
+    msg.Format(_T("%s\t%s%s"), LogLevelName(item->level), A2T(item->msg.c_str()), _T("\r\n"));
+    m_edtLog.ReplaceSel((LPCTSTR)msg);
     m_edtLog.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
     CLogMgr::Instance().ReleaseLog(item);
 
@@ -175,7 +176,7 @@ LRESULT CLogDlg::OnAddMessage(WPARAM wParam, LPARAM lParam) {
 
         if (nIndex != -1) {
             m_edtLog.SetSel(0, nIndex);
-            m_edtLog.ReplaceSel("");
+            m_edtLog.ReplaceSel(_T(""));
         }
     }
 
@@ -183,7 +184,7 @@ LRESULT CLogDlg::OnAddMessage(WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT CLogDlg::OnClearMessage(WPARAM wParam, LPARAM lParam) {
-    m_edtLog.SetWindowText("");
+    m_edtLog.SetWindowText(_T(""));
     return 0;
 }
 

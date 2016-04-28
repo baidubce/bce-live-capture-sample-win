@@ -8,10 +8,10 @@ class CChoosePresetDlg : public CDialog {
     DECLARE_DYNAMIC(CChoosePresetDlg)
 
 public:
-    // lc_preset_list_t* list: 输入参数，用户可选的模板列表。
-    // lc_preset_t** preset: 输出参数，用户选定的模板
-    CChoosePresetDlg(lc_preset_list_t* list,
-                     lc_preset_t** preset,
+    // lc_transcode_preset_list_t* list: 输入参数，用户可选的模板列表。
+    // lc_transcode_preset_t** preset: 输出参数，用户选定的模板
+    CChoosePresetDlg(lc_list_t list,
+                     lc_transcode_preset_t** preset,
                      CWnd* pParent = NULL);
     virtual ~CChoosePresetDlg();
 
@@ -25,8 +25,8 @@ private:
     BOOL OnInitDialog();
 
 private:
-    lc_preset_list_t* m_pPresetList;
-    lc_preset_t** m_ppPreset;
+    lc_list_t m_pPresetList;
+    lc_transcode_preset_t** m_ppPreset;
     CComboBox m_cmbPresets;
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);

@@ -44,6 +44,13 @@
 #include "LogMgr.h"
 #include <afxdhtml.h>
 
+#include <lc_types.h>
+#include <lc_notification.h>
+#include <lc_transcode_preset.h>
+#include <lc_security_policy.h>
+#include <lc_recording_preset.h>
+#include <lc_session.h>
+
 struct ILock {
     virtual void Lock() = 0;
     virtual void Unlock() = 0;

@@ -10,7 +10,7 @@ IMPLEMENT_DYNAMIC(CVolumeEx, CWnd);
 CVolumeEx::CVolumeEx(UINT nIDSwitchOn, UINT nIDSwitchOff, UINT nIDPassedBmp,
                      UINT nIDBackBmp, UINT nIDSliderRes)
     : m_Slider(nIDPassedBmp, nIDBackBmp, nIDSliderRes)
-    , m_bSwitch("关闭", FALSE, 20, 20)
+    , m_bSwitch(_T("关闭"), FALSE, 20, 20)
     , m_bOn(TRUE) {
     m_nIDSwitchOn = nIDSwitchOn;
     m_nIDSwitchOff = nIDSwitchOff;
@@ -50,7 +50,7 @@ int CVolumeEx::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
     ASSERT(m_hWnd != NULL);
 
-    if (!m_bSwitch.Create("开启/关闭", WS_CHILD | WS_VISIBLE , CRect(0, 0, 0, 0), this, ID_SWITCH)) {
+    if (!m_bSwitch.Create(_T("开启/关闭"), WS_CHILD | WS_VISIBLE , CRect(0, 0, 0, 0), this, ID_SWITCH)) {
         return -1;
     }
 
@@ -126,11 +126,11 @@ BOOL CVolumeEx::DoMouseWheel(UINT fFlags, short zDelta, CPoint point) {
 void CVolumeEx::OnSwitch() {
     if (m_bOn) {
         m_bSwitch.LoadBitmaps(m_nIDSwitchOff);
-        m_bSwitch.SetToolTip("开启");
+        m_bSwitch.SetToolTip(_T("开启"));
         m_bOn = FALSE;
     } else {
         m_bSwitch.LoadBitmaps(m_nIDSwitchOn);
-        m_bSwitch.SetToolTip("关闭");
+        m_bSwitch.SetToolTip(_T("关闭"));
         m_bOn = TRUE;
     }
 
@@ -154,8 +154,8 @@ void CVolumeEx::OnSlider() {
         pParentWnd->SendMessage(WM_VOLUME, m_bOn, db);
     }
 
-    char strDB[5] = {0};
-    _ltoa_s(db, strDB, 5, 10);
+    TCHAR strDB[5] = {0};
+    _ltot_s(db, strDB, 5, 10);
     m_Slider.SetToolTip(strDB);
 }
 

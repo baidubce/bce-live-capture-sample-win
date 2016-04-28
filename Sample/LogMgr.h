@@ -52,7 +52,7 @@ public:
     void FilterLog(LC_LOGLEVEL filter, CString& msg);
 
     // 添加日志
-    void AppendLog(LC_LOGLEVEL level, const char* msg);
+    void AppendLog(LC_LOGLEVEL level, LPCTSTR msg);
 
     // 释放日志
     void ReleaseLog(LogItem* item);
@@ -62,11 +62,11 @@ public:
 };
 
 #define LOG_IMPLE(_NAME_, _LEVEL_) \
-static void __inline _NAME_ (const char* __mod__, const char* __title__, const char* __fmt__, ...) {\
+static void __inline _NAME_ (LPCTSTR __mod__, LPCTSTR __title__, LPCTSTR __fmt__, ...) {\
     va_list list;\
     va_start(list, __fmt__);\
     CString msg;\
-    msg.Format("%s\t%s\t", __mod__, __title__);\
+    msg.Format(_T("%s\t%s\t"), __mod__, __title__);\
     msg.AppendFormatV(__fmt__, list);\
     va_end(list);\
     CLogMgr::Instance().AppendLog(_LEVEL_, msg);\

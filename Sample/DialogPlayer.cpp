@@ -41,6 +41,7 @@ BEGIN_MESSAGE_MAP(CDialogPlayer, CDialogEx)
     ON_WM_CREATE()
     ON_WM_DESTROY()
     ON_WM_LBUTTONDBLCLK()
+    ON_WM_SYSCOMMAND()
 END_MESSAGE_MAP()
 
 BOOL CDialogPlayer::PreTranslateMessage(LPMSG msg) {
@@ -95,6 +96,18 @@ BOOL CDialogPlayer::OnInitDialog() {
     return TRUE;
 }
 
+void CDialogPlayer::OnSysCommand(UINT nID, LPARAM lParam) {
+    if (nID == SC_CLOSE) {
+        if (m_bFloating) {
+            SavePosAndSize();
+            m_pHost->DockPlayer(this);
+            m_bFloating = 0;
+        }
+    } else {
+        CDialogEx::OnSysCommand(nID, lParam);
+    }
+}
+
 void CDialogPlayer::PushVideo(lc_sample_raw_video_t* sample) {
     Lock();
 
@@ -127,15 +140,15 @@ void CDialogPlayer::Reset() {
     m_pPlayer->SetWindowId((guintptr)(m_winPic.GetSafeHwnd()));
     m_pPlayer->SetLevelCallback(OnLevelCallback, this);
 
-    std::map<const char*, const char*> params;
+    std::map<LPCTSTR, LPCTSTR> params;
     CString videoSink;
     CString audioSink;
 
-    params["VIDEOSINK"] = GstPipelineBase::FindVideoSink(videoSink);
-    params["AUDIOSINK"] = GstPipelineBase::FindAudioSink(audioSink);
+    params[_T("VIDEOSINK")] = GstPipelineBase::FindVideoSink(videoSink);
+    params[_T("AUDIOSINK")] = GstPipelineBase::FindAudioSink(audioSink);
 
     if (!m_pPlayer->Create(params)) {
-        MessageBox("´´½¨Ô¤ÀÀÊ§°Ü");
+        MessageBox(_T("´´½¨Ô¤ÀÀÊ§°Ü"));
     } else {
         m_pPlayer->Run();
     }
@@ -213,10 +226,10 @@ void CDialogPlayer::Relayout() {
 }
 
 BOOL CDialogPlayer::OnCreate(LPCREATESTRUCT lpCreateStruct) {
-    m_winPpm.Create(gGetChildWindowClassName(), "PPM", WS_CHILD | WS_VISIBLE, CRect(), this, 0x123);
-    m_winVol.Create(gGetChildWindowClassName(), "VOL", WS_CHILD | WS_VISIBLE, CRect(), this, 0x345);
+    m_winPpm.Create(gGetChildWindowClassName(), _T("PPM"), WS_CHILD | WS_VISIBLE, CRect(), this, 0x123);
+    m_winVol.Create(gGetChildWindowClassName(), _T("VOL"), WS_CHILD | WS_VISIBLE, CRect(), this, 0x345);
     m_winPic.Create(AfxRegisterWndClass(CS_VREDRAW | CS_HREDRAW | CS_PARENTDC | CS_DBLCLKS, 0,
-                                        (HBRUSH)GetStockObject(BLACK_BRUSH)), "PIC", WS_CHILD | WS_VISIBLE, CRect(), this, 0x567);
+                                        (HBRUSH)GetStockObject(BLACK_BRUSH)), _T("PIC"), WS_CHILD | WS_VISIBLE, CRect(), this, 0x567);
     return CWnd::OnCreate(lpCreateStruct);
 }
 

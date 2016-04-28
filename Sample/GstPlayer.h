@@ -23,7 +23,7 @@ public:
     void PushVideo(lc_sample_raw_video_t* sample);
     void PushAudio(lc_sample_raw_audio_t* sample);
 public:
-    virtual const char* GetPipelineString(const std::map<const char*, const char*>&);
+    virtual LPCTSTR GetPipelineString(const std::map<LPCTSTR, LPCTSTR>&);
     virtual int CanPause();
     virtual int CanSeek();
     virtual int OnBuilt();

@@ -35,7 +35,7 @@ public:
     inline CDuBitmap(int nID): m_pObject(0) {
         Load(nID);
     }
-    inline CDuBitmap(LPCSTR lpID): m_pObject(0) {
+    inline CDuBitmap(LPCTSTR lpID): m_pObject(0) {
         Load(lpID);
     }
     inline CDuBitmap(CData& Data): m_pObject(&Data) {
@@ -78,9 +78,9 @@ public:
     }
 
     int Load(int nID);
-    int Load(LPCSTR lpID);
+    int Load(LPCTSTR lpID);
     int LoadDirect(int nID);
-    int LoadDirect(LPCSTR lpID);
+    int LoadDirect(LPCTSTR lpID);
 
     CSize GetSize();
 
@@ -96,7 +96,7 @@ class CDuBitmapCache {
 public:
     long __stdcall LockServer(long fLock);
     CDuBitmap __stdcall Load(int nID);
-    CDuBitmap __stdcall Load(LPCSTR lpID);
+    CDuBitmap __stdcall Load(LPCTSTR lpID);
 
 public:
     CDuBitmapCache();
@@ -120,7 +120,7 @@ public:
 
 protected:
     int Find(int nID);
-    int Find(LPCSTR lpID);
+    int Find(LPCTSTR lpID);
 };
 
 
@@ -136,7 +136,7 @@ public:
     inline int Add(CDuBitmap bmp) {
         return bmp.Valid() ? _BaseT::Add(bmp) : -1;
     }
-    inline int Add(LPCSTR lpID) {
+    inline int Add(LPCTSTR lpID) {
         return Add(CDuBitmap(lpID));
     }
     inline int Add(int nID) {
@@ -151,7 +151,7 @@ public:
         return Bmp.Valid();
     }
 
-    inline int SetAt(int nInd, LPCSTR lpID) {
+    inline int SetAt(int nInd, LPCTSTR lpID) {
         return SetAt(nInd, CDuBitmap(lpID));
     }
     inline int SetAt(int nInd, int nID) {

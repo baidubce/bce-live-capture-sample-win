@@ -76,9 +76,9 @@ void CDisplayConfigDlg::DoDataExchange(CDataExchange* pDX) {
 BOOL CDisplayConfigDlg::OnInitDialog() {
     BOOL bRet = CDialog::OnInitDialog();
 
-    m_cmbTypes.AddString("录制全屏");
-    m_cmbTypes.AddString("录制窗口");
-    m_cmbTypes.AddString("录制指定区域");
+    m_cmbTypes.AddString(_T("录制全屏"));
+    m_cmbTypes.AddString(_T("录制窗口"));
+    m_cmbTypes.AddString(_T("录制指定区域"));
 
     m_cmbTypes.SetCurSel(m_pInfo->type);
 
@@ -100,7 +100,7 @@ void CDisplayConfigDlg::OnUpdateHwnd() {
     HWND hwnd = m_StaticIcon.GetFindWindow();
     m_nHwnd = (UINT)hwnd;
     CString str;
-    str.Format("%d", m_nHwnd);
+    str.Format(_T("%d"), m_nHwnd);
     m_edtHwnd.SetWindowText(str);
 }
 
@@ -121,7 +121,7 @@ void CDisplayConfigDlg::OnBnClickedButtonOk() {
     case DISPLAY_WINDOW:
         m_pInfo->info.hwnd = m_nHwnd;
         if(!IsWindow((HWND)m_nHwnd)) {
-            MessageBox("窗口无效，重新选择", "错误", MB_OK);
+            MessageBox(_T("窗口无效，重新选择"), _T("错误"), MB_OK);
             return;
         }
         break;

@@ -19,7 +19,7 @@ public:
     virtual ~GstPipelineBase(void);
 
 public:
-    int Create(std::map<const char*, const char*>& params);
+    int Create(std::map<LPCTSTR, LPCTSTR>& params);
     void Destroy();
 
     int Run();
@@ -30,8 +30,8 @@ public:
     virtual int CanSeek();
     PIPELINE_STATUS GetStatus();
 
-    static const char* FindVideoSink(CString& videoSink);
-    static const char* FindAudioSink(CString& audioSink);
+    static LPCTSTR FindVideoSink(CString& videoSink);
+    static LPCTSTR FindAudioSink(CString& audioSink);
 
 protected:
     GstPipeline* m_pGstPipeline;
@@ -50,7 +50,7 @@ protected:
     int __cdecl SendBusCmd(BUS_CMD cmd, int wait, ...);
 
     virtual int OnBuilt();
-    virtual const char* GetPipelineString(const std::map<const char*, const char*>&);
+    virtual LPCTSTR GetPipelineString(const std::map<LPCTSTR, LPCTSTR>&);
 
     virtual void OnSyncGstMessage(GstBus* bus, GstMessage* message);
     virtual void OnGstMessage(GstBus* bus, GstMessage* message);
@@ -65,10 +65,10 @@ protected:
 
     virtual int OnBeforePipelineRun();
     virtual int OnBeforeRestartPipeline();
-    virtual const char* Name();
+    virtual LPCTSTR Name();
 
-    int Format(const char* fmt, const std::map<const char*, const char*>& args, CString& dst);
-    static int IsUsableGstPlugin(const char* name);
+    int Format(LPCTSTR fmt, const std::map<LPCTSTR, LPCTSTR>& args, CString& dst);
+    static int IsUsableGstPlugin(LPCTSTR name, GstCaps* sink, GstCaps* src);
 
 private:
     GMutex m_lock;

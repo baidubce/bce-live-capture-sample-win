@@ -2,14 +2,10 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 #include <live_capture.h>
+#include "PropertyGridDialog.h"
 
 
 class CToolsDlg;
-class CMFCPropertyGridCtrl;
-class CMFCPropertyGridProperty;
-
-#include "property_grid_helper.h"
-
 
 typedef enum _tagPRESET_MODE {
     MODE_VIEW,
@@ -17,7 +13,7 @@ typedef enum _tagPRESET_MODE {
 } PRESET_MODE;
 
 
-class CPresetDlg : public CDialog {
+class CPresetDlg : public CPropertyGridDialog {
     DECLARE_DYNAMIC(CPresetDlg)
 
 public:
@@ -27,26 +23,25 @@ public:
 
 private:
     CToolsDlg* m_pParent;
-    CMFCPropertyGridCtrl* m_ppgPreset;
     CButton m_btnMode;
     CButton m_btnCancel;
     PRESET_MODE m_eMode;
     CTreeCtrl m_trePresets;
-    lc_preset_list_t* m_pPresetList;
+    lc_list_t m_pPresetList;
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);
     BOOL OnInitDialog();
     void OnOK();
     void OnCancel();
-    void UpdatePropertyList(lc_preset_t* preset, BOOL allowEdit);
-    void UpdatePropertyItem(CMFCPropertyGridProperty* pgp, lc_preset_t* preset, BOOL allowEdit);
-    void CreatePropertyGrid();
-    CMFCPropertyGridProperty* CreatePropertyItem(const PropertyItem* pi);
     void UpdatePresetList();
-    BOOL ChoosePreset(lc_preset_list_t* list, lc_preset_t** preset);
-    void BuildPresetFromPropertyList(lc_preset_t* preset);
-    void SavePropertyValue(CMFCPropertyGridProperty* pgp, lc_preset_t* preset);
+    BOOL ChoosePreset(lc_list_t list, lc_transcode_preset_t** preset);
     void SetMode(PRESET_MODE mode);
+
+    virtual void GetPropertyGridRect(LPRECT rc);
+    virtual const PropertyItem* GetPropertyList();
+
+    virtual void OnPropertyChanged(const PropertyItem* pi, CMFCPropertyGridProperty* pgp);
+    void setForwardOnly(BOOL forwardOnly);
 
 public:
     DECLARE_MESSAGE_MAP()

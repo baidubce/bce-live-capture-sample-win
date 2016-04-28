@@ -4,294 +4,29 @@
 #include "ToolsDlg.h"
 #include "LogMgr.h"
 #include "DialogCreateSession.h"
-
-static const PropertyItem s_session_target_items[] = {
-    {
-        "Bos Bucket",
-        offsetof(lc_session_t, config) + offsetof(lc_session_config_t, target) + offsetof(lc_target_t, bosBucket),
-        LC_MAX_BOS_BUCKET_LEN ,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {
-        "Bucket域名",
-        offsetof(lc_session_t, config) + offsetof(lc_session_config_t, target) + offsetof(lc_target_t, userDomain),
-        LC_MAX_USER_DOMAIN_LEN ,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {0,}
-};
-
-static const PropertyItem s_session_playurl_items[] = {
-    {
-        "HLS",
-        offsetof(lc_session_t, play) + offsetof(lc_session_play_t, hlsUrl),
-        LC_MAX_URL_LEN ,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {
-        "rtmp",
-        offsetof(lc_session_t, play) + offsetof(lc_session_play_t, rtmpUrl),
-        LC_MAX_URL_LEN ,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {
-        "rtmpKey",
-        offsetof(lc_session_t, play) + offsetof(lc_session_play_t, rtmpKey),
-        LC_MAX_RTMP_KEY_LEN ,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {0,}
-};
-static const PropertyItem s_session_publish_items[] = {
-    {
-        "URL",
-        offsetof(lc_session_t, publish) + offsetof(lc_session_publish_t, pushUrl),
-        LC_MAX_URL_LEN ,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {
-        "Auth",
-        offsetof(lc_session_t, publish) + offsetof(lc_session_publish_t, pushAuth),
-        sizeof(bool) ,
-        read_int,
-        write_int,
-        NULL,
-        NULL,
-        NULL
-    },
-    {0,}
-};
-
-static const PropertyItem s_session_error_items[] = {
-    {
-        "代码",
-        offsetof(lc_session_t, error) + offsetof(lc_session_error_t, code),
-        LC_MAX_ERR_CODE ,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {
-        "信息",
-        offsetof(lc_session_t, error) + offsetof(lc_session_error_t, message),
-        LC_MAX_ERR_MSG ,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {0,}
-};
-
-static const PropertyItem s_session_record_items[] = {
-    {
-        "文件前缀",
-        offsetof(lc_session_t, record) + offsetof(lc_session_records_t, keyPrefix),
-        LC_MAX_BUFFER,
-        read_string,
-        NULL,
-        NULL,
-        NULL,
-        NULL
-    },
-    {0,}
-};
-
-static const PropertyItem s_session_thumbnail_items[] = {
-    {
-        "文件前缀",
-        offsetof(lc_session_t, thumbnail) + offsetof(lc_session_thumbnail_t, keyPrefix),
-        LC_MAX_BUFFER,
-        read_string,
-        NULL,
-        NULL,
-        NULL,
-        NULL
-    },
-    {0,}
-};
-
-static const PropertyNameValue s_valid_session_status[] = {
-    {"", SESSION_UNKNOWN},
-    {"就绪", SESSION_READY},
-    {"正在直播", SESSION_ONGOING},
-    {"暂停", SESSION_PAUSED},
-    {"已关闭", SESSION_CLOSED},
-    {0,}
-};
-
-static const PropertyNameValue s_valid_session_streaming_status[] = {
-    {"", STREAMING_UNKNOWN},
-    {"正在推流", STREAMING_STREAMING},
-    {"空闲", STREAMING_NO_SOURCE},
-    {"失败", STREAMING_FAILED},
-    {0,}
-};
-
-static const PropertyItem s_session_items[] = {
-    {
-        "用户ID",
-        offsetof(lc_session_t, userId),
-        LC_MAX_USER_ID_LEN,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {
-        "会话ID",
-        offsetof(lc_session_t, sessionId),
-        LC_MAX_SESSION_ID_LEN,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {
-        "会话描述",
-        offsetof(lc_session_t, config) + offsetof(lc_session_config_t, description),
-        LC_MAX_SESSION_DESC,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {
-        "直播模板",
-        offsetof(lc_session_t, config) + offsetof(lc_session_config_t, presetName),
-        LC_MAX_PRESET_NAME,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    {"存储", 0, 0, NULL, NULL, NULL, NULL, s_session_target_items},
-    {
-        "创建时间",
-        offsetof(lc_session_t, createTime),
-        sizeof(long long),
-        read_ll_time,
-        NULL,
-        NULL,
-        NULL,
-        NULL
-    },
-    {
-        "最后更新",
-        offsetof(lc_session_t, lastUpdateTime),
-        sizeof(long long),
-        read_ll_time,
-        NULL,
-        NULL,
-        NULL,
-        NULL
-    },
-    {
-        "关闭时间",
-        offsetof(lc_session_t, closedTime),
-        sizeof(long long),
-        read_ll_time,
-        NULL,
-        NULL,
-        NULL,
-        NULL
-    },
-    {"推流地址", 0, 0, NULL, NULL, NULL, NULL, s_session_publish_items},
-
-    {"播放地址", 0, 0, NULL, NULL, NULL, NULL, s_session_playurl_items},
-    {
-        "状态",
-        offsetof(lc_session_t, status),
-        sizeof(LC_SESSION_STATUS),
-        read_int,
-        write_int,
-        NULL,
-        s_valid_session_status,
-        NULL
-    },
-    {
-        "推流状态",
-        offsetof(lc_session_t, streamingStatus),
-        sizeof(LC_SESSION_STREAMING_STATUS),
-        read_int,
-        write_int,
-        NULL,
-        s_valid_session_streaming_status,
-        NULL
-    },
-    {"错误信息", 0, 0, NULL, NULL, NULL, NULL, s_session_error_items},
-    {"录制文件", 0, 0, NULL, NULL, NULL, NULL, s_session_record_items},
-    {"缩略图", 0, 0, NULL, NULL, NULL, NULL, s_session_thumbnail_items},
-    {
-        "状态通知",
-        offsetof(lc_session_t, notification),
-        LC_MAX_BUFFER,
-        read_string,
-        write_string,
-        NULL,
-        NULL,
-        NULL
-    },
-    { 0,}
-};
+#include "session_items.h"
 
 typedef enum {
     ID_NONE,
     ID_DELETE,
-    ID_STOP,
+    ID_PAUSE,
     ID_RESUME,
 };
 
-IMPLEMENT_DYNAMIC(CSessionDlg, CDialog)
+IMPLEMENT_DYNAMIC(CSessionDlg, CPropertyGridDialog)
 
 CSessionDlg::CSessionDlg(CWnd* pParent /*=NULL*/, BOOL select_mode /*=FALSE*/)
-    : CDialog(CSessionDlg::IDD, pParent)
+    : CPropertyGridDialog(CSessionDlg::IDD, pParent)
     , m_pSessionList(0)
-    , m_ppgSession(0)
     , m_pSelectedSession(0)
     , m_bSelectMode(select_mode)
     , m_pParent(DYNAMIC_DOWNCAST(CToolsDlg, pParent)) {
 }
 
 CSessionDlg::~CSessionDlg() {
-    if (m_ppgSession) {
-        delete m_ppgSession;
-    }
-
     if (m_pSessionList) {
         //调用API，释放会话列表
-        lc_session_list_free(m_pSessionList);
+        lc_list_free(m_pSessionList);
     }
 
     m_pSelectedSession = NULL;
@@ -303,7 +38,7 @@ void CSessionDlg::DoDataExchange(CDataExchange* pDX) {
 }
 
 
-BEGIN_MESSAGE_MAP(CSessionDlg, CDialog)
+BEGIN_MESSAGE_MAP(CSessionDlg, CPropertyGridDialog)
     ON_WM_NCDESTROY()
     ON_WM_CLOSE()
     ON_BN_CLICKED(IDC_BUTTON_REFRESH, &CSessionDlg::OnBnClickedButtonRefresh)
@@ -346,51 +81,35 @@ void CSessionDlg::OnBnClickedButtonClose() {
         m_pSelectedSession = (lc_session_t*)m_treeSession.GetItemData(item);
     }
 
-    OnClose();
+	if (m_bSelectMode) {
+		if (ValidSession(m_pSelectedSession)) {
+			OnClose();
+		}
+	} else {
+        OnClose();
+    }
+}
+
+BOOL CSessionDlg::ValidSession(lc_session_t* session) {
+	if (session && session->config.security_policy[0]) {
+		lc_security_policy_t policy = {0};
+		lc_security_policy_query(&session->config.security_policy[0], &policy);
+		if (policy.auth.play || policy.auth.push) {
+			MessageBox(_T("暂时不支持播放认证和推流认证"));
+			lc_security_policy_free(&policy);
+			return FALSE;
+		}
+		lc_security_policy_free(&policy);
+	}
+	return TRUE;
 }
 
 CString CSessionDlg::GetSelectedSessionId() {
+    USES_CONVERSION;
     if (m_pSelectedSession) {
-        return m_pSelectedSession->sessionId;
+        return A2T(m_pSelectedSession->session_id);
     } else {
-        return "";
-    }
-}
-
-void CSessionDlg::UpdatePropertyList(lc_session_t* session, BOOL allowEdit) {
-    int count = m_ppgSession->GetPropertyCount();
-
-    for (int i = 0; i < count; i ++) {
-        CMFCPropertyGridProperty* pgp = m_ppgSession->GetProperty(i);
-
-        if (pgp) {
-            UpdatePropertyItem(pgp, session, allowEdit);
-        }
-    }
-}
-
-void CSessionDlg::UpdatePropertyItem(CMFCPropertyGridProperty* pgp, lc_session_t* session,
-                                     BOOL allowEdit) {
-    int count = pgp->GetSubItemsCount();
-
-    for (int i = 0; i < count; i++) {
-        CMFCPropertyGridProperty* subPgp = pgp->GetSubItem(i);
-
-        if (subPgp) {
-            UpdatePropertyItem(subPgp, session, allowEdit);
-        }
-    }
-
-    const PropertyItem* data = (PropertyItem*) pgp->GetData();
-    pgp->AllowEdit(allowEdit);
-
-    if (session && data && data->Read) {
-        data->Read(session, data, pgp);
-    } else {
-        COleVariant var = pgp->GetValue();
-        COleVariant newVar;
-        newVar.ChangeType(var.vt);
-        pgp->SetValue(newVar);
+        return _T("");
     }
 }
 
@@ -420,9 +139,9 @@ void CSessionDlg::OnNMRClickTreeSession(NMHDR* pNMHDR, LRESULT* pResult) {
         m_treeSession.SelectItem(item);
         HMENU hPop = CreatePopupMenu();
 
-        InsertMenu(hPop, 0, MF_BYPOSITION, ID_STOP, "停止(&S)");
-        InsertMenu(hPop, 1, MF_BYPOSITION, ID_RESUME, "恢复(&R)");
-        InsertMenu(hPop, 2, MF_BYPOSITION, ID_DELETE, "删除(&D)");
+        InsertMenu(hPop, 0, MF_BYPOSITION, ID_PAUSE, _T("停止(&S)"));
+        InsertMenu(hPop, 1, MF_BYPOSITION, ID_RESUME, _T("恢复(&R)"));
+        InsertMenu(hPop, 2, MF_BYPOSITION, ID_DELETE, _T("删除(&D)"));
 
         int cmd = TrackPopupMenu(hPop,
                                  TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_LEFTBUTTON | TPM_RETURNCMD,
@@ -443,32 +162,34 @@ void CSessionDlg::OnNMRClickTreeSession(NMHDR* pNMHDR, LRESULT* pResult) {
 }
 
 void CSessionDlg::OnDeleteSession(lc_session_t* session, HTREEITEM item) {
+    USES_CONVERSION;
     CString strmsg;
 
     if (session) {
-        strmsg.Format("确定要删除'%s(%s)'吗", session->sessionId, session->config.description);
+        strmsg.Format(_T("确定要删除'%s(%s)'吗"), A2T(session->session_id), A2T(session->config.description));
 
-        if (MessageBox(strmsg, "删除提示", MB_YESNO | MB_ICONINFORMATION) == IDYES) {
+        if (MessageBox(strmsg, _T("删除提示"), MB_YESNO | MB_ICONINFORMATION) == IDYES) {
             //调用API，删除会话
-            if (LC_OK == lc_session_delete(session->sessionId)) {
+            if (LC_OK == lc_session_delete(session->session_id)) {
                 m_treeSession.DeleteItem(item);
             } else {
-                strmsg.Format("删除失败\r\n%s", lc_get_last_error());
-                MessageBox(strmsg, "执行错误");
+                strmsg.Format(_T("删除失败\r\n%s"), A2T(lc_get_last_error()));
+                MessageBox(strmsg, _T("执行错误"));
             }
         }
     }
 }
 
 void CSessionDlg::OnResumeSession(lc_session_t* session) {
+    USES_CONVERSION;
     if (session) {
         //调用API，恢复会话状态
-        if (LC_OK == lc_session_resume(session->sessionId)) {
+        if (LC_OK == lc_session_resume(session->session_id)) {
             UpdateSession(session);
         } else {
             CString strmsg;
-            strmsg.Format("操作失败\r\n%s", lc_get_last_error());
-            MessageBox(strmsg, "执行错误");
+            strmsg.Format(_T("操作失败\r\n%s"), A2T(lc_get_last_error()));
+            MessageBox(strmsg, _T("执行错误"));
         }
     }
 }
@@ -478,27 +199,28 @@ void CSessionDlg::UpdateSession(lc_session_t* session) {
         lc_session_t newSession = {0};
 
         //调用API，从服务端查询会话
-        if (LC_OK == lc_session_query(session->sessionId, &newSession)) {
-            lc_session_free(session);
+        if (LC_OK == lc_session_query(session->session_id, &newSession)) {
             *session = newSession;
             UpdatePropertyList(session, FALSE);
         }
     }
 }
 
-void CSessionDlg::OnStopSession(lc_session_t* session) {
+void CSessionDlg::OnPauseSession(lc_session_t* session) {
+    USES_CONVERSION;
+
     CString strmsg;
 
     if (session) {
-        strmsg.Format("确定要停止'%s(%s)'吗", session->sessionId, session->config.description);
+        strmsg.Format(_T("确定要停止'%s(%s)'吗"), A2T(session->session_id), A2T(session->config.description));
 
-        if (MessageBox(strmsg, "停止提示", MB_YESNO | MB_ICONINFORMATION) == IDYES) {
+        if (MessageBox(strmsg, _T("停止提示"), MB_YESNO | MB_ICONINFORMATION) == IDYES) {
             //调用API，停止会话
-            if (LC_OK == lc_session_stop(session->sessionId)) {
+            if (LC_OK == lc_session_pause(session->session_id)) {
                 UpdateSession(session);
             } else {
-                strmsg.Format("停止失败\r\n%s", lc_get_last_error());
-                MessageBox(strmsg, "执行错误");
+                strmsg.Format(_T("停止失败\r\n%s"), A2T(lc_get_last_error()));
+                MessageBox(strmsg, _T("执行错误"));
             }
         }
     }
@@ -514,8 +236,8 @@ void CSessionDlg::OnMenuCmd(int cmd, lc_session_t* session, HTREEITEM item) {
         OnResumeSession(session);
         break;
 
-    case ID_STOP:
-        OnStopSession(session);
+    case ID_PAUSE:
+        OnPauseSession(session);
         break;
 
     default:
@@ -531,9 +253,7 @@ BOOL CSessionDlg::OnInitDialog() {
     CreatePropertyGrid();
     return TRUE;
 }
-
-void CSessionDlg::CreatePropertyGrid() {
-
+void CSessionDlg::GetPropertyGridRect(LPRECT rc) {
     CRect rcTree;
     CRect rcClient;
     GetClientRect(rcClient);
@@ -544,82 +264,51 @@ void CSessionDlg::CreatePropertyGrid() {
 
     rcClient.DeflateRect(3, 3, 3, 52);
 
-    m_ppgSession = new CMFCPropertyGridCtrl();
-
-    m_ppgSession->Create(WS_VISIBLE | WS_CHILD, rcClient, this, 0);
-    m_ppgSession->EnableHeaderCtrl(FALSE);
-    m_ppgSession->EnableDescriptionArea(FALSE);
-
-    const PropertyItem* pi = &s_session_items[0];
-
-    while (pi->Name) {
-        CMFCPropertyGridProperty* prop = CreatePropertyItem(pi);
-        m_ppgSession->AddProperty(prop);
-        pi ++;
-    }
+    *rc = rcClient;
 }
 
-CMFCPropertyGridProperty* CSessionDlg::CreatePropertyItem(const PropertyItem* pi) {
-    CMFCPropertyGridProperty* ret = NULL;
-
-    if (pi->Read || pi->Write) {
-        ret = new CMFCPropertyGridProperty(pi->Name, COleVariant(), NULL, (DWORD_PTR)pi);
-    } else {
-        ret = new CMFCPropertyGridProperty(pi->Name, (DWORD_PTR)pi);
-    }
-
-    if (pi->SubItems) {
-        const PropertyItem* subPi = pi->SubItems;
-
-        while (subPi->Name) {
-            CMFCPropertyGridProperty* subItem = CreatePropertyItem(subPi);
-            ret->AddSubItem(subItem);
-            subPi ++;
-        }
-    }
-
-    if (pi->Options) {
-        const PropertyNameValue* cur = pi->Options;
-
-        while (cur->Name) {
-            ret->AddOption(cur->Name);
-            cur ++;
-        }
-    }
-
-    ret->AllowEdit(FALSE);
-
-    return ret;
+const PropertyItem* CSessionDlg::GetPropertyList() {
+    return &s_session_items[0];
 }
+
 
 void CSessionDlg::UpdateSessionList() {
+    USES_CONVERSION;
+
     m_treeSession.SetRedraw(FALSE);
     m_treeSession.DeleteAllItems();
 
     if (m_pSessionList) {
         //调用API，释放会话列表
-        lc_session_list_free(m_pSessionList);
+        lc_list_free(m_pSessionList);
         m_pSessionList = NULL;
     }
 
     //调用API，从服务端读取会话列表
-    if (LC_OK == lc_session_list(&m_pSessionList)) {
+    if (LC_OK == lc_session_list(&m_pSessionList, SESSION_UNKNOWN)) {
         for (int i = 0 ;
-                i < m_pSessionList->count;
+                i < lc_list_count(m_pSessionList);
                 i ++) {
-            lc_session_t* session = &m_pSessionList->session_list[i];
+            lc_session_t* session = (lc_session_t*)lc_list_get_at(m_pSessionList, i);
 
-            if (session->status != SESSION_CLOSED &&
-                    session->status != SESSION_UNKNOWN) {
+            // 选择模式下，跳过拉流模式的会话，只能选择推流模式
+            if (m_bSelectMode) {
+                if (session->config.publish.is_pull) {
+                    continue;
+                }
+            }
+
+            if (session->status != SESSION_UNKNOWN) {
                 CString strItemName;
-                strItemName.Format("%s, %s", session->sessionId, session->config.description);
+                strItemName.Format(_T("%s, %s"), A2T(session->session_id), A2T(session->config.description));
                 HTREEITEM item = m_treeSession.InsertItem(strItemName);
                 m_treeSession.SetItemData(item, (DWORD_PTR)session);
             }
         }
     } else {
-        CLogMgr::Instance().AppendLog(LC_LOG_ERROR, lc_get_last_error());
+        CLogMgr::Instance().AppendLog(LC_LOG_ERROR, A2T(lc_get_last_error()));
     }
+
     m_treeSession.SetRedraw(TRUE);
 }
 
@@ -636,7 +325,9 @@ void CSessionDlg::OnNMDblclkTreeSession(NMHDR* pNMHDR, LRESULT* pResult) {
 
         if (item) {
             m_pSelectedSession = (lc_session_t*)m_treeSession.GetItemData(item);
-            OnClose();
+			if (ValidSession(m_pSelectedSession)) {
+				OnClose();
+			}
         } else {
             m_pSelectedSession = NULL;
         }
@@ -647,7 +338,8 @@ void CSessionDlg::OnNMDblclkTreeSession(NMHDR* pNMHDR, LRESULT* pResult) {
 
 void CSessionDlg::OnBnClickedButtonCreate() {
     CDialogCreateSession dlg(this);
-    if( dlg.DoModal() == IDOK ) {
+
+    if (dlg.DoModal() == IDOK) {
         UpdateSessionList();
     }
 }

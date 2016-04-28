@@ -22,12 +22,23 @@ protected:
 public:
     afx_msg void OnBnClickedOk();
     afx_msg void OnBnClickedCancel();
-    CString m_strDescription;
+    afx_msg void OnBnClickedCheckPull();
+ CString m_strDescription;
     CString m_strPreset;
-    CString m_strBucket;
-    CString m_strDomain;
-    BOOL m_bPushAuth;
     CString m_strNotification;
     CComboBox m_cmbNotifications;
     CComboBox m_cmbPresets;
+    CEdit m_edtPullUrl;
+    CComboBox m_cmbRecPresets;
+    CComboBox m_cmbSecurityPolicies;
+    CComboBox m_cmbRegions;
+    CButton m_chkPull;
+    CString m_strRecPreset;
+    CString m_strSecurityPolicy;
+    CString m_strRegion;
+    CString m_strPullUrl;
+    BOOL m_bPull;
+
+protected:
+    void UpdatePullUrlEdit();
 };

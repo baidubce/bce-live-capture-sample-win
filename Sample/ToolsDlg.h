@@ -20,11 +20,14 @@ public:
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);
     void UpdateRtmpRadio(int bUserRtmp);
-    void UpdateLiveCaptureData();
     void UpdateStatus();
     void UpdateStatusUi(LC_STATUS status, LC_CODE code);
     BOOL ValidateData();
     void UpdateVideoInfos();
+    void UpdatePresetsComboBox();
+    void UpdateAuthMode();
+    void IfUserPreset();
+
 protected:
     HICON m_hIcon;
     virtual BOOL OnInitDialog();
@@ -44,6 +47,7 @@ public:
     afx_msg void OnBnClickedCheckSaveBce();
     afx_msg void OnBnClickedCheckSaveLocal();
     afx_msg void OnBnClickedButtonRefreshData();
+    afx_msg void OnBnClickedUserPreset();
     afx_msg void OnMenuPreset();
     afx_msg void OnUpdateMenuPreset(CCmdUI* pCmdUI);
     afx_msg void OnMenuSession();
@@ -55,10 +59,12 @@ public:
     afx_msg void OnBnClickedButtonVideoConfig();
     afx_msg void OnBnClickedButtonVideoConfig2();
     afx_msg void OnBnClickedRadioExistingSession();
+    afx_msg void OnCbnSelchangeComboPreset();
     afx_msg void OnCbnSelchangeComboVideoInfo();
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnCbnSelchangeComboVideo();
     afx_msg void OnCbnSelchangeComboVideo2();
+    afx_msg LRESULT OnIdleUpdateCmdUI(WPARAM, LPARAM);
 
 private:
     static void LC_API sample_callback(lc_handle_t handle, LC_SAMPLE_TYPE type, void* sample,
@@ -71,6 +77,9 @@ protected:
     static LC_CODE LC_API enumVideoInfo(const lc_video_info_t* info, void* inst);
     LC_CODE OnEnumVideoInfo(const lc_video_info_t* info);
 public:
+    BOOL DoAuth(lc_bce_access_key_t* key, CString& host, BOOL enableConfig, BOOL enablePrompt = TRUE);
+    void UpdateLiveCaptureData();
+
     void OnLogDlgClosed(CLogDlg* dlg);
     void OnPresetDlgClosed(CPresetDlg* dlg);
     void OnSessionDlgClosed(CSessionDlg* dlg);
@@ -85,7 +94,8 @@ protected:
 private:
     CToolsModel m_Model;
     lc_handle_t m_handle;
-    lc_preset_list_t* m_presets;
+    lc_list_t m_presets;
+    BOOL m_bAuth;
     CLogDlg* m_pLogDlg;
     CPresetDlg* m_pPresetDlg;
     CSessionDlg* m_pSessionDlg;
@@ -96,9 +106,6 @@ private:
     CEdit m_edtExistingSession;
     CEdit m_edtStatis;
     CEdit m_EdtLocalPath;
-    CEdit m_EdtBosBucket;
-    CEdit m_EdtUserDomain;
-    CEdit m_EdtSessionName;
     CEdit m_EdtUserRtmp;
     CEdit m_EdtHLSPlayUrl;
     CEdit m_EdtRtmpPlayUrl;
@@ -111,9 +118,9 @@ private:
     CButton m_BtnStop;
     CButton m_BtnStart;
     CButton m_rdoUserRtmp;
-    CButton m_rdoBceRtmp;
     CButton m_rdoExistRtmp;
     CButton m_ChkSaveLocal;
+    CButton m_BtnUserPreset;
     CComboBox m_cmbVideoInfos;
     CComboBox m_CmbVideoDevices;
     CComboBox m_CmbAudioDevices;
@@ -147,6 +154,7 @@ public:
     afx_msg void OnNotification();
     afx_msg void OnUpdateNotification(CCmdUI* pCmdUI);
     afx_msg void OnUpdateOption(CCmdUI* pCmdUI);
+    afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 
     afx_msg void OnBnClickedCheckVideo2();
 };

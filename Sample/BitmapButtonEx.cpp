@@ -28,7 +28,7 @@ CBitmapButtonEx::CBitmapButtonEx(CString strTip, BOOL bFocusRect,
 CBitmapButtonEx::~CBitmapButtonEx() {
 }
 
-void CBitmapButtonEx::SetToolTip(LPCSTR strTip) {
+void CBitmapButtonEx::SetToolTip(LPCTSTR strTip) {
     m_strTip = strTip;
 
     if (m_Tt.m_hWnd) {
@@ -38,7 +38,7 @@ void CBitmapButtonEx::SetToolTip(LPCSTR strTip) {
 }
 
 void CBitmapButtonEx::SetToolTip(CString& strTip) {
-    SetToolTip((LPCSTR)strTip);
+    SetToolTip((LPCTSTR)strTip);
 }
 
 BEGIN_MESSAGE_MAP(CBitmapButtonEx, CBitmapButton)

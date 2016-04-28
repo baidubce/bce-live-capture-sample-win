@@ -36,6 +36,7 @@ protected:
     afx_msg BOOL OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnDestroy();
     afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+    afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
     static void OnLevelCallback(int ch, double val, gpointer data);
     const char* GetFileLocation(CString& location);
     void OnLevel(int ch, double val);

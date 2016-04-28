@@ -17,8 +17,10 @@ public:
     void GetAk(CString& ak);
     void GetSk(CString& sk);
     void GetHost(CString& host);
+    void GetRegions(CStringArray& regions);
 
     void SetAk(CString& ak);
     void SetSk(CString& sk);
     void SetHost(CString& host);
+    void SetRegions(CString& regions);
 };

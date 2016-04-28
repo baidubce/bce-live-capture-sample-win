@@ -28,6 +28,8 @@ void CDialogOption::DoDataExchange(CDataExchange* pDX) {
 }
 
 void CDialogOption::OnOK() {
+    USES_CONVERSION;
+
     if (!UpdateData(TRUE)) {
         return;
     }
@@ -37,40 +39,37 @@ void CDialogOption::OnOK() {
     CString sk;
 
     if (m_strAK.Trim().IsEmpty()) {
-        MessageBox("请输入'AK'。");
+        MessageBox(_T("请输入'AK'。"));
         return;
     }
 
     if (m_strSK.Trim().IsEmpty()) {
-        MessageBox("请输入'SK'。");
+        MessageBox(_T("请输入'SK'。"));
         return;
     }
 
     if (m_strHost.Trim().IsEmpty())  {
-        MessageBox("请输入'服务器地址'。");
+        MessageBox(_T("请输入'服务器地址'。"));
         return;
     }
 
     lc_bce_access_key_t key = { 0 };
-    strncpy_s(key.access_key_id, (LPCSTR)m_strAK, -1);
-    strncpy_s(key.secret_access_key, (LPCSTR)m_strSK, -1);
+    strncpy_s(key.access_key_id, T2A(m_strAK), -1);
+    strncpy_s(key.secret_access_key, T2A(m_strSK), -1);
 
-    // 初始化采集SDK
-    if (LC_OK != lc_init(&key, m_strHost)) {
-        CLogMgr::Instance().AppendLog(LC_LOG_ERROR, "lc_init failed.");
-        MessageBox("初始化采集模块失败");
-        return;
+    if (m_pParent->DoAuth(&key, m_strHost, FALSE)) {
+
+        aes.Encrypt(m_strAK, ak);
+        aes.Encrypt(m_strSK, sk);
+
+        ConfigMgr::Instance().SetAk(ak);
+        ConfigMgr::Instance().SetSk(sk);
+        ConfigMgr::Instance().SetHost(m_strHost);
+        m_pParent->UpdateLiveCaptureData();
+
+        EndDialog(IDOK);
+        DestroyWindow();
     }
-
-    aes.Encrypt(m_strAK, ak);
-    aes.Encrypt(m_strSK, sk);
-
-    ConfigMgr::Instance().SetAk(ak);
-    ConfigMgr::Instance().SetSk(sk);
-    ConfigMgr::Instance().SetHost(m_strHost);
-
-    EndDialog(IDOK);
-    DestroyWindow();
 }
 void CDialogOption::OnCancel() {
     OnClose();
@@ -97,9 +96,9 @@ BOOL CDialogOption::OnInitDialog() {
     aes.Decrypt(ak, ak);
     aes.Decrypt(sk, sk);
 
-    m_strAK = ak;
-    m_strSK = sk;
-    m_strHost = host;
+    m_strAK = m_strAKbak = ak;
+    m_strSK = m_strSKbak = sk;
+    m_strHost = m_strHostbak = host;
 
     CDialog::OnInitDialog();
     return TRUE;
@@ -110,9 +109,17 @@ BEGIN_MESSAGE_MAP(CDialogOption, CDialog)
     ON_BN_CLICKED(IDC_BUTTON_CLOSE, &CDialogOption::OnBnClickedButtonClose)
     ON_WM_NCDESTROY()
     ON_WM_CLOSE()
+    ON_NOTIFY(NM_CLICK, IDC_SYSLINK1, &CDialogOption::OnNMClickSyslink1)
+    ON_NOTIFY(NM_CLICK, IDC_SYSLINK2, &CDialogOption::OnNMClickSyslink2)
 END_MESSAGE_MAP()
 
 void CDialogOption::OnClose() {
+    USES_CONVERSION;
+    lc_bce_access_key_t key = { 0 };
+    strncpy_s(key.access_key_id, T2A(m_strAKbak), -1);
+    strncpy_s(key.secret_access_key, T2A(m_strSKbak), -1);
+
+    m_pParent->DoAuth(&key, m_strHostbak, FALSE, FALSE);
     DestroyWindow();
 }
 void CDialogOption::OnBnClickedButtonOk() {
@@ -120,5 +127,17 @@ void CDialogOption::OnBnClickedButtonOk() {
 }
 
 void CDialogOption::OnBnClickedButtonClose() {
-    DestroyWindow();
+    OnClose();
+}
+
+void CDialogOption::OnNMClickSyslink1(NMHDR* pNMHDR, LRESULT* pResult) {
+    PNMLINK pNMLink = (PNMLINK) pNMHDR;
+    ShellExecuteW(NULL, L"open", pNMLink->item.szUrl, NULL, NULL, SW_SHOWNORMAL);
+    *pResult = 0;
+}
+
+void CDialogOption::OnNMClickSyslink2(NMHDR* pNMHDR, LRESULT* pResult) {
+    PNMLINK pNMLink = (PNMLINK) pNMHDR;
+    ShellExecuteW(NULL, L"open", pNMLink->item.szUrl, NULL, NULL, SW_SHOWNORMAL);
+    *pResult = 0;
 }

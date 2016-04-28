@@ -17,10 +17,11 @@ CLogMgr& CLogMgr::Instance() {
 }
 
 // 添加日志,如果日志数大于最大容量，删除最旧的日志
-void CLogMgr::AppendLog(LC_LOGLEVEL level, const char* msg) {
+void CLogMgr::AppendLog(LC_LOGLEVEL level, LPCTSTR msg) {
+    USES_CONVERSION;
     LogItem* item = new LogItem();
     item->level = level;
-    item->msg = msg;
+    item->msg = T2A(msg);
     item->ref = 1;
     HWND hwnd = NULL;
     m_lock.Lock();
@@ -115,7 +116,7 @@ void CLogMgr::FilterLog(LC_LOGLEVEL filter, CString& msg) {
             it ++) {
         if ((*it)->level >= filter) {
             msg += (*it)->msg.c_str();
-            msg += "\r\n";
+            msg += _T("\r\n");
         }
     }
 
@@ -135,7 +136,7 @@ void CLogMgr::AddRefLog(LogItem* item) {
 BOOL CLogMgr::SaveAs(CString& path) {
 
     FILE* file = NULL;
-    fopen_s(&file, path, "w");
+    _tfopen_s(&file, path, _T("w"));
 
     if (file) {
 

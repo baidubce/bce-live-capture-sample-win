@@ -17,8 +17,8 @@ GstPipelineBase::~GstPipelineBase(void) {
     Destroy();
     g_mutex_clear(&m_lock);
 }
-const char* GstPipelineBase::Name() {
-    return "GstPipelineBase";
+LPCTSTR GstPipelineBase::Name() {
+    return _T("GstPipelineBase");
 }
 
 int GstPipelineBase::IsRunning() {
@@ -37,27 +37,58 @@ void GstPipelineBase::Unlock() {
     g_mutex_unlock(&m_lock);
 }
 
-int GstPipelineBase::IsUsableGstPlugin(const char* name) {
-    GstElement* element = gst_element_factory_make(name, "test");
+int GstPipelineBase::IsUsableGstPlugin(LPCTSTR name, GstCaps* sink, GstCaps* src) {
+    USES_CONVERSION;
+
+    GstElement* element = gst_element_factory_make(T2A(name), "test");
 
     if (!element) {
         return 0;
     }
 
+    GParamSpec* spec = g_object_class_find_property(G_OBJECT_GET_CLASS(element), "async");
+
+    if (spec && spec->flags & G_PARAM_WRITABLE) {
+        g_object_set(G_OBJECT(element), "async", FALSE, NULL);
+    }
+
+    BOOL caps_ok = TRUE;
+
+    if (src || sink) {
+
+        GstIterator* iter = gst_element_iterate_pads(element);
+
+        if (iter) {
+            GstPad* pad = NULL;
+
+            while (GST_ITERATOR_OK == gst_iterator_next(iter, (gpointer*)&pad)) {
+                if (GST_PAD_DIRECTION(pad) == GST_PAD_SINK && sink) {
+                    caps_ok &= gst_pad_set_caps(pad, sink);
+                } else if (GST_PAD_DIRECTION(pad) == GST_PAD_SRC && src) {
+                    caps_ok &= gst_pad_set_caps(pad, src);
+                }
+
+                gst_object_unref(pad);
+            }
+
+            gst_iterator_free(iter);
+        }
+    }
+
     int ret = (GST_STATE_CHANGE_FAILURE != gst_element_set_state(element, GST_STATE_PAUSED));
     gst_element_set_state(element, GST_STATE_NULL);
     gst_object_unref(element);
-    return ret;
+    return ret && caps_ok;
 }
 
-const char* GstPipelineBase::FindVideoSink(CString& videoSink) {
-    const char* videosinks[] = {"d3dvideosink", "dshowvideosink", "directdrawsink", 0};
-    const char** element = videosinks;
+LPCTSTR GstPipelineBase::FindVideoSink(CString& videoSink) {
+    LPCTSTR videosinks[] = {_T("d3dvideosink"), _T("dshowvideosink"), _T("directdrawsink"), 0};
+    LPCTSTR* element = videosinks;
 
-    videoSink = "fakesink";
+    videoSink = _T("fakesink");
 
     while (*element) {
-        if (IsUsableGstPlugin(*element)) {
+        if (IsUsableGstPlugin(*element, NULL, NULL)) {
             videoSink = *element;
             break;
         }
@@ -67,14 +98,24 @@ const char* GstPipelineBase::FindVideoSink(CString& videoSink) {
 
     return videoSink;
 }
-const char* GstPipelineBase::FindAudioSink(CString& audioSink) {
-    const char* audiosinks[] = {"waveformsink", "directsoundsink", 0};
-    const char** element = audiosinks;
+LPCTSTR GstPipelineBase::FindAudioSink(CString& audioSink) {
+    LPCTSTR audiosinks[] = {_T("waveformsink"), _T("directsoundsink"), 0};
+    LPCTSTR* element = audiosinks;
 
-    audioSink = "fakesink";
+    audioSink = _T("fakesink");
+
+    GstCaps* caps = gst_caps_new_simple(
+                        "audio/x-raw-int",
+                        "rate", G_TYPE_INT, 44100,
+                        "channels", G_TYPE_INT, 2,
+                        "width", G_TYPE_INT, 16,
+                        "depth", G_TYPE_INT, 16,
+                        "signed", G_TYPE_BOOLEAN, FALSE,
+                        "endianness", G_TYPE_INT, G_LITTLE_ENDIAN,
+                        NULL);
 
     while (*element) {
-        if (IsUsableGstPlugin(*element)) {
+        if (IsUsableGstPlugin(*element, caps, NULL)) {
             audioSink = *element;
             break;
         }
@@ -82,38 +123,40 @@ const char* GstPipelineBase::FindAudioSink(CString& audioSink) {
         element++;
     }
 
+    gst_caps_unref(caps);
+
     return audioSink;
 }
 
-int GstPipelineBase::Format(const char* templ, const std::map<const char*, const char*>& params,
+int GstPipelineBase::Format(LPCTSTR templ, const std::map<LPCTSTR, LPCTSTR>& params,
                             CString& dst) {
     dst.Empty();
-    char* fmt = _strdup(templ);
+    TCHAR* fmt = _tcsdup(templ);
 
     if (!fmt) {
-        LogError(__FILE__, __FUNCTION__, "strdup failed.");
+        LogError(_T(__FILE__), _T(__FUNCTION__), _T("strdup failed."));
         return NULL;
     }
 
-    int len = strlen(fmt);
+    int len = _tcslen(fmt);
 
     int start = -1;
 
-    std::vector<const char*> va;
+    std::vector<LPCTSTR> va;
 
     for (int i = 0; i < len && fmt[i]; i ++) {
         if (fmt[i] == '{') {
             start = i;
         } else if (fmt[i] == '}' && start >= 0) {
             if (i - start - 1 > 0) {
-                for (std::map<const char*, const char*>::const_iterator it = params.begin();
+                for (std::map<LPCTSTR, LPCTSTR>::const_iterator it = params.begin();
                         it != params.end();
                         it ++) {
-                    if (_strnicmp(it->first, &fmt[start + 1], i - start - 1) == 0) {
+                    if (_tcsnicmp(it->first, &fmt[start + 1], i - start - 1) == 0) {
                         va.push_back(it->second);
                         fmt[start] = '%';
                         fmt[start + 1] = 's';
-                        memmove(&fmt[start + 2], &fmt[++i], len - i + 1);
+                        memmove(&fmt[start + 2], &fmt[++i], (len - i + 1)*sizeof(TCHAR));
                         i = start + 1;
                         break;
                     }
@@ -127,7 +170,7 @@ int GstPipelineBase::Format(const char* templ, const std::map<const char*, const
     if (va.size()) {
         dst.FormatV(fmt, (va_list)&va[0]);
     } else {
-        dst.Format("%s", fmt);
+        dst.Format(_T("%s"), fmt);
     }
 
     free(fmt);
@@ -135,23 +178,24 @@ int GstPipelineBase::Format(const char* templ, const std::map<const char*, const
     return 1;
 }
 
-int GstPipelineBase::Create(std::map<const char*, const char*>& params) {
+int GstPipelineBase::Create(std::map<LPCTSTR, LPCTSTR>& params) {
+    USES_CONVERSION;
     CScopedLock lock(this);
 
     if (IsRunning()) {
-        LogError(__FILE__, __FUNCTION__, "pipeline is runing.stop it and then try create again");
+        LogError(_T(__FILE__), _T(__FUNCTION__), _T("pipeline is runing.stop it and then try create again"));
         return 0;
     }
 
     Destroy_nolock();
 
-    const char* pipestr = GetPipelineString(params);
+    LPCTSTR pipestr = GetPipelineString(params);
 
     if (pipestr) {
         GError* err = NULL;
         GstElement* pipeElement = NULL;
 
-        pipeElement = gst_parse_launch(pipestr, &err);
+        pipeElement = gst_parse_launch(T2A(pipestr), &err);
 
         if (pipeElement) {
             m_pGstPipeline = GST_PIPELINE(pipeElement);
@@ -159,13 +203,13 @@ int GstPipelineBase::Create(std::map<const char*, const char*>& params) {
             if (m_pGstPipeline) {
                 if (!OnBuilt()) {
                     gst_object_unref(pipeElement);
-                    LogError(__FILE__, __FUNCTION__, "pipeline string parsed, but OnBuilt failed");
+                    LogError(_T(__FILE__), _T(__FUNCTION__), _T("pipeline string parsed, but OnBuilt failed"));
                     return 0;
                 }
 
                 return 1;
             } else {
-                LogError(__FILE__, __FUNCTION__, "pipeline string parsed, but it is not type of GstPipeline");
+                LogError(_T(__FILE__), _T(__FUNCTION__), _T("pipeline string parsed, but it is not type of GstPipeline"));
                 gst_object_unref(pipeElement);
                 return 0;
             }
@@ -174,11 +218,11 @@ int GstPipelineBase::Create(std::map<const char*, const char*>& params) {
                 g_error_free(err);
             }
 
-            LogError(__FILE__, __FUNCTION__, "create pipe failed, '%s'", pipestr);
+            LogError(_T(__FILE__), _T(__FUNCTION__), _T("create pipe failed, '%s'"), pipestr);
             return 0;
         }
     } else {
-        LogError(__FILE__, __FUNCTION__, "GetPipelineString failed");
+        LogError(_T(__FILE__), _T(__FUNCTION__), _T("GetPipelineString failed"));
         return 0;
     }
 }
@@ -208,8 +252,8 @@ int GstPipelineBase::Run() {
 
 int GstPipelineBase::Run_nolock() {
     if (!m_pGstPipeline) {
-        LogError(__FILE__, __FUNCTION__,
-                 "CCapturePipeline::Start with NULL Pipeline");
+        LogError(_T(__FILE__), _T(__FUNCTION__),
+                 _T("CCapturePipeline::Start with NULL Pipeline"));
         return 0;
     }
 
@@ -226,8 +270,8 @@ int GstPipelineBase::Run_nolock() {
     m_pGstThread = g_thread_try_new("gst_thread", GstThreadEntry, this, &error);
 
     if (error) {
-        LogError(__FILE__, __FUNCTION__,
-                 "create gst thread failed '%s'", error->message);
+        LogError(_T(__FILE__), _T(__FUNCTION__),
+                 _T("create gst thread failed '%s'"), error->message);
         g_error_free(error);
     }
 
@@ -285,12 +329,12 @@ void GstPipelineBase::GstThread() {
             }
 
             if (!OnBeforeRestartPipeline()) {
-                LogError(__FILE__, __FUNCTION__, "OnBeforeRestartPipeline failed. retrying later");
+                LogError(_T(__FILE__), _T(__FUNCTION__), _T("OnBeforeRestartPipeline failed. retrying later"));
                 continue;
             }
         } else {
             if (!OnBeforePipelineRun()) {
-                LogError(__FILE__, __FUNCTION__, "OnBeforePipelineRun failed.");
+                LogError(_T(__FILE__), _T(__FUNCTION__), _T("OnBeforePipelineRun failed."));
                 break;
             }
         }
@@ -345,7 +389,7 @@ int GstPipelineBase::Seek(long long time) {
     CScopedLock lock(this);
 
     if (!IsRunning()) {
-        LogError(__FILE__, __FUNCTION__, "seek was called while pipeline is in wrong state");
+        LogError(_T(__FILE__), _T(__FUNCTION__), _T("seek was called while pipeline is in wrong state"));
         return 0;
     }
 
@@ -360,12 +404,12 @@ int GstPipelineBase::Pause() {
     CScopedLock lock(this);
 
     if (m_eStatus == PS_PAUSED) {
-        LogWarning(__FILE__, __FUNCTION__, "pipe line is already in paused state");
+        LogWarning(_T(__FILE__), _T(__FUNCTION__), _T("pipe line is already in paused state"));
         return 1;
     }
 
     if (!IsRunning()) {
-        LogError(__FILE__, __FUNCTION__, "pipe line is not running when pause action requested.");
+        LogError(_T(__FILE__), _T(__FUNCTION__), _T("pipe line is not running when pause action requested."));
         return 0;
     }
 
@@ -376,7 +420,7 @@ void GstPipelineBase::SetStatus_nolock(PIPELINE_STATUS status) {
     if (m_eStatus != status) {
         m_eStatus = status;
 
-        LogInfo("GstPipelineBase", __FUNCTION__, "Status Changed %d", status);
+        LogInfo(_T("GstPipelineBase"), _T(__FUNCTION__), _T("Status Changed %d"), status);
     }
 }
 
@@ -429,12 +473,13 @@ void GstPipelineBase::OnSyncGstMessage(GstBus* bus, GstMessage* message) {
 }
 
 void GstPipelineBase::OnGstMessage(GstBus* bus, GstMessage* message) {
+    USES_CONVERSION;
 
     if (message) {
         switch (message->type) {
         case GST_MESSAGE_EOS:
-            LogError(__FILE__, __FUNCTION__,
-                     "Gst Pipeline Received EOS message");
+            LogError(_T(__FILE__), _T(__FUNCTION__),
+                     _T("Gst Pipeline Received EOS message"));
             g_main_loop_quit(m_pLoop);
             break;
 
@@ -443,9 +488,9 @@ void GstPipelineBase::OnGstMessage(GstBus* bus, GstMessage* message) {
             gchar* debug = NULL;
             gst_message_parse_error(message, &error, &debug);
 
-            LogError(__FILE__, __FUNCTION__,
-                     "GstPipeline Received Error Message; Error:%s,Debug:%s",
-                     error ? error->message : "(NULL)", debug ? debug : "(NULL)");
+            LogError(_T(__FILE__), _T(__FUNCTION__),
+                     _T("GstPipeline Received Error Message; Error:%s,Debug:%s"),
+                     error ? A2T(error->message) : _T("(NULL)"), debug ? A2T(debug) : _T("(NULL)"));
             g_main_loop_quit(m_pLoop);
 
             if (error) {
@@ -462,9 +507,9 @@ void GstPipelineBase::OnGstMessage(GstBus* bus, GstMessage* message) {
             GError* error = NULL;
             gchar* debug = NULL;
             gst_message_parse_warning(message, &error, &debug);
-            LogError(__FILE__, __FUNCTION__,
-                     "GstPipeline Received Warning Message; Error:%s,Debug:%s",
-                     error ? error->message : "(NULL)", debug ? debug : "(NULL)");
+            LogError(_T(__FILE__), _T(__FUNCTION__),
+                     _T("GstPipeline Received Warning Message; Error:%s,Debug:%s"),
+                     error ? A2T(error->message) : _T("(NULL)"), debug ? A2T(debug) : _T("(NULL)"));
 
             if (error) {
                 if (error->domain == GST_RESOURCE_ERROR &&
@@ -486,9 +531,9 @@ void GstPipelineBase::OnGstMessage(GstBus* bus, GstMessage* message) {
             GError* error = NULL;
             gchar* debug = NULL;
             gst_message_parse_info(message, &error, &debug);
-            LogInfo(__FILE__, __FUNCTION__,
-                    "GstPipeline Received Info Message; Error:%s,Debug:%s",
-                    error ? error->message : "(NULL)", debug ? debug : "(NULL)");
+            LogInfo(_T(__FILE__), _T(__FUNCTION__),
+                    _T("GstPipeline Received Info Message; Error:%s,Debug:%s"),
+                    error ? A2T(error->message) : _T("(NULL)"), debug ? A2T(debug) : _T("(NULL)"));
 
             if (error) {
                 g_error_free(error);
@@ -572,7 +617,7 @@ int GstPipelineBase::OnPreStart() {
         m_pGstBus = gst_pipeline_get_bus(m_pGstPipeline);
 
         if (!m_pGstBus) {
-            LogError(__FILE__, __FUNCTION__, "gst_pipeline_get_bus failed");
+            LogError(_T(__FILE__), _T(__FUNCTION__), _T("gst_pipeline_get_bus failed"));
             return 0;
         }
     }
@@ -589,7 +634,7 @@ int GstPipelineBase::OnBuilt() {
         m_pGstBus = gst_pipeline_get_bus(m_pGstPipeline);
 
         if (!m_pGstBus) {
-            LogError(__FILE__, __FUNCTION__, "gst_pipeline_get_bus failed");
+            LogError(_T(__FILE__), _T(__FUNCTION__), _T("gst_pipeline_get_bus failed"));
             return 0;
         }
     }
@@ -597,8 +642,8 @@ int GstPipelineBase::OnBuilt() {
     return 1;
 }
 
-const char* GstPipelineBase::GetPipelineString(const std::map<const char*, const char*>&) {
-    LogError(__FILE__, __FUNCTION__, "child class must override GetPipelineString");
+LPCTSTR GstPipelineBase::GetPipelineString(const std::map<LPCTSTR, LPCTSTR>&) {
+    LogError(_T(__FILE__), _T(__FUNCTION__), _T("child class must override GetPipelineString"));
     return NULL;
 }
 
@@ -630,7 +675,7 @@ int GstPipelineBase::SendBusCmd(BUS_CMD cmd, int wait, ...) {
     va_end(args);
 
     if (!str) {
-        LogError(__FILE__, __FUNCTION__, "send bus cmd failed because of GstStructure alloc failure");
+        LogError(_T(__FILE__), _T(__FUNCTION__), _T("send bus cmd failed because of GstStructure alloc failure"));
         return 0;
     }
 
@@ -638,7 +683,7 @@ int GstPipelineBase::SendBusCmd(BUS_CMD cmd, int wait, ...) {
 
     if (!msg) {
         gst_structure_free(str);
-        LogError(__FILE__, __FUNCTION__, "send bus cmd failed because of GstMessage alloc failure");
+        LogError(_T(__FILE__), _T(__FUNCTION__), _T("send bus cmd failed because of GstMessage alloc failure"));
         return 0;
     }
 
@@ -662,7 +707,7 @@ int GstPipelineBase::SendBusCmd(BUS_CMD cmd, int wait, ...) {
             gst_message_unref(msg);
         }
 
-        LogError(__FILE__, __FUNCTION__, "send bus cmd failed because of gst_bus_post failure");
+        LogError(_T(__FILE__), _T(__FUNCTION__), _T("send bus cmd failed because of gst_bus_post failure"));
         return 0;
     }
 }
@@ -750,7 +795,7 @@ int GstPipelineBase::PrepareWaitMsg(GstMessage* msg) {
     HANDLE h = CreateEvent(NULL, TRUE, FALSE, NULL);
 
     if (!h) {
-        LogError(__FILE__, __FUNCTION__, "CreateEvent failed");
+        LogError(_T(__FILE__), _T(__FUNCTION__), _T("CreateEvent failed"));
         return 0;
     }
 
@@ -789,7 +834,7 @@ void GstPipelineBase::OnBusCmd(BUS_CMD cmd, va_list args) {
     break;
 
     default:
-        LogError(__FILE__, __FUNCTION__, "Unknown bus cmd:%d", cmd);
+        LogError(_T(__FILE__), _T(__FUNCTION__), _T("Unknown bus cmd:%d"), cmd);
         break;
     }
 }

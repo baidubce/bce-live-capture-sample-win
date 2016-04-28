@@ -1,14 +1,21 @@
 #include "StdAfx.h"
 #include "ToolsModel.h"
 
+static const lc_transcode_preset_t g_default_preset = {
+    "640x480,25fps,620kbps",
+    "高清,480p,4:3",
+    false, /* forward_only */
+    {80000, 22050, 2, true},
+    {H264, 540000, 2500, 640, 480, KEEP, {HIGH}, true},
+    {2, 3, 0, true}, /*hls*/
+    {false, true}, /*rtmp*/
+};
+
 CToolsModel::CToolsModel(void):
     m_RTMPPlayUrl(""),
     m_HLSPlayUrl(""),
     m_UserRTMPUrl(""),
-    m_BCESessionName(""),
-    m_RtmpOption(TRUE),
-    m_BCEUserDomain(""),
-    m_BCEBucket(""),
+    m_RtmpOption(EXISTING_SESSION),
     m_SaveLocal(FALSE),
     m_LocalSavePath(""),
     m_Status("就绪"),
@@ -23,6 +30,8 @@ CToolsModel::CToolsModel(void):
     m_szVideo(0, 0),
     m_szVideo2(200, 150) {
     m_nVersion = VERSION_INT;
+
+    memcpy(&m_PresetUnion.m_sPreset, &g_default_preset, sizeof(lc_transcode_preset_t));
 }
 
 CToolsModel::~CToolsModel(void) {
@@ -167,22 +176,9 @@ BOOL CToolsModel::Validate(CString& err) {
     }
 
     switch (m_RtmpOption) {
-    case EXISTING_SESSION:
+    case EXISTING_SESSION: {
         if (m_BCESessionId.IsEmpty()) {
             err = "没有输入已经存在的SessionId";
-            return FALSE;
-        }
-
-        break;
-
-    case  CREATE_SESSION: {
-        if (m_BCEBucket.IsEmpty()) {
-            err = "没有输入BOS存储Bucket";
-            return FALSE;
-        }
-
-        if (m_BCEUserDomain.IsEmpty()) {
-            err = "没有输入BOS存储域名";
             return FALSE;
         }
     }
@@ -211,18 +207,18 @@ BOOL CToolsModel::Validate(CString& err) {
     op m_Status \
     op m_LocalSavePath \
     op m_SaveLocal \
-    op m_BCEBucket \
-    op m_BCEUserDomain \
     op m_RtmpOption \
     op m_BCESessionId \
-    op m_BCESessionName \
     op m_UserRTMPUrl \
     op m_bTwoVideoSrc \
     op m_VideoDevice2 \
     op m_ptVideo \
     op m_ptVideo2 \
     op m_szVideo \
-    op m_szVideo2
+    op m_szVideo2; \
+    for( int i = 0; i < sizeof(m_PresetUnion.m_cPresetData); i ++ ) { \
+        __ar__ op m_PresetUnion.m_cPresetData[i]; \
+    }
 
 
 void CToolsModel::Serailize() {
@@ -269,8 +265,8 @@ void CToolsModel::Deserailize() {
 }
 
 BOOL CToolsModel::GetStorageFile(CFile* file, BOOL write) {
-    char* pgm = NULL;
-    _get_pgmptr(&pgm);
+    TCHAR* pgm = NULL;
+    _get_tpgmptr(&pgm);
 
     if (!pgm) {
         return FALSE;
@@ -286,7 +282,7 @@ BOOL CToolsModel::GetStorageFile(CFile* file, BOOL write) {
     strPath.SetAt(n + 1, 0);
     strPath.ReleaseBuffer();
 
-    strPath.Append("sample.dat");
+    strPath.Append(_T("sample.dat"));
 
     return file->Open(strPath,
                       write ? (CFile::modeWrite | CFile::modeCreate) : CFile::modeRead);

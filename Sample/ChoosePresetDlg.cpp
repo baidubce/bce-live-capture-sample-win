@@ -2,10 +2,9 @@
 #include "Sample.h"
 #include "ChoosePresetDlg.h"
 
-
 IMPLEMENT_DYNAMIC(CChoosePresetDlg, CDialog)
 
-CChoosePresetDlg::CChoosePresetDlg(lc_preset_list_t* list, lc_preset_t** preset,
+CChoosePresetDlg::CChoosePresetDlg(lc_list_t list, lc_transcode_preset_t** preset,
                                    CWnd* pParent /*=NULL*/)
     : CDialog(CChoosePresetDlg::IDD, pParent)
     , m_pPresetList(list)
@@ -32,7 +31,7 @@ void CChoosePresetDlg::OnBnClickedButtonOk() {
     int id = m_cmbPresets.GetCurSel();
 
     if (id >= 0) {
-        *m_ppPreset = (lc_preset_t*) m_cmbPresets.GetItemData(id);
+        *m_ppPreset = (lc_transcode_preset_t*) m_cmbPresets.GetItemData(id);
     } else {
         *m_ppPreset = NULL;
     }
@@ -57,16 +56,20 @@ void CChoosePresetDlg::OnCancel() {
 // 初始化ComboBox，将模板列表添加到ComboBox中
 BOOL CChoosePresetDlg::OnInitDialog() {
     CDialog::OnInitDialog();
-    int id = m_cmbPresets.AddString("不选择");
+
+    USES_CONVERSION;
+
+    int id = m_cmbPresets.AddString(_T("不选择"));
     m_cmbPresets.SetCurSel(id);
 
     if (m_pPresetList) {
-        for (int i = 0; i < m_pPresetList->count;
+        for (int i = 0; i < lc_list_count(m_pPresetList);
                 i ++) {
-            id = m_cmbPresets.AddString(m_pPresetList->preset_list[i].presetName);
+                    lc_transcode_preset_t* preset = (lc_transcode_preset_t*)lc_list_get_at(m_pPresetList, i);
+                    id = m_cmbPresets.AddString(A2T(preset->name));
 
             if (id >= 0) {
-                m_cmbPresets.SetItemData(id, (DWORD_PTR) &m_pPresetList->preset_list[i]);
+                m_cmbPresets.SetItemData(id, (DWORD_PTR)preset);
             }
         }
     }

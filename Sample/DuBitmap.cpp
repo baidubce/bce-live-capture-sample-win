@@ -49,7 +49,7 @@ int CDuBitmap::LoadDirect(int nID) {
     return Valid();
 }
 
-int CDuBitmap::LoadDirect(LPCSTR lpID) {
+int CDuBitmap::LoadDirect(LPCTSTR lpID) {
     ASSERT(lpID);
 
     Create();
@@ -77,7 +77,7 @@ int CDuBitmap::Load(int nID) {
     return bmp.Valid();
 }
 
-int CDuBitmap::Load(LPCSTR lpID) {
+int CDuBitmap::Load(LPCTSTR lpID) {
     if (lpID == 0) {
         return FALSE;
     }
@@ -103,7 +103,7 @@ int CDuBitmapCache::Find(int nID) {
 }
 
 
-int CDuBitmapCache::Find(LPCSTR lpID) {
+int CDuBitmapCache::Find(LPCTSTR lpID) {
     for (int i = 0; i < m_Cache.GetSize(); i++) {
         if (m_Cache[i].m_strID == lpID) {
             return i;
@@ -148,7 +148,7 @@ CDuBitmap __stdcall CDuBitmapCache::Load(int nID) {
 }
 
 
-CDuBitmap __stdcall CDuBitmapCache::Load(LPCSTR lpID) {
+CDuBitmap __stdcall CDuBitmapCache::Load(LPCTSTR lpID) {
     if (lpID == 0) {
         return CDuBitmap();
     }

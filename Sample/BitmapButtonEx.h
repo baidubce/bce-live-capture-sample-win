@@ -6,7 +6,7 @@
 class CBitmapButtonEx : public CBitmapButton {
     DECLARE_DYNAMIC(CBitmapButtonEx);
 public:
-    CBitmapButtonEx(CString Strtip = "", BOOL bFocusRect = TRUE, int prefredWidth = 38,
+    CBitmapButtonEx(CString Strtip = _T(""), BOOL bFocusRect = TRUE, int prefredWidth = 38,
                     int minWidth = 30);
 
 public:
@@ -24,7 +24,7 @@ public:
     virtual ~CBitmapButtonEx();
 
 public:
-    void SetToolTip(LPCSTR strTip);
+    void SetToolTip(LPCTSTR strTip);
     void SetToolTip(CString& strTip);
     BOOL LoadBitmaps(UINT nIDBitmap);
     void SizeToContent();

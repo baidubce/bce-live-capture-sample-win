@@ -5,12 +5,12 @@
 
 using namespace std;
 
-static const unsigned char DEFAULT_KEY[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f'};
+static const TCHAR DEFAULT_KEY[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 AES::AES() {
     BuildSBox();
     BuildInvSBox();
-    m_Base64_Table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    m_Base64_Table = _T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 }
 
 void AES::EncryptionProcess() {
@@ -312,10 +312,10 @@ AES::byte AES::GFMultplyByte(const byte& left, const byte& right) {
 
     for (int i = 1; i < 8; ++i) {
         if (temp[i - 1] >= 0x80) { //若(temp[i-1] 首位为"1"
-            temp[i] = temp[i - 1] << 1;
+            temp[i] = (temp[i - 1] << 1) & 0xff;
             temp[i] = temp[i] ^ 0x1b;    //与(00011011)异或
         } else {
-            temp[i] = temp[i - 1] << 1;
+            temp[i] = (temp[i - 1] << 1) & 0xff;
         }
     }
 
@@ -412,14 +412,14 @@ void AES::EncodeBase64(CString& strSource, CString& strOut) {
     */
 
     CString strEncode;
-    char cTemp[4];
+    byte cTemp[4];
 
     //行长度,MIME规定Base64编码行长为76字节
     int LineLength = 0;
     int sourceLen = strSource.GetLength();
 
     for (int i = 0; i < sourceLen; i += 3) {
-        memset(cTemp, 0, 4);
+        memset(cTemp, 0, 4 * sizeof(byte));
 
         cTemp[0] = strSource[i];
 
@@ -431,7 +431,7 @@ void AES::EncodeBase64(CString& strSource, CString& strOut) {
             cTemp[2] = strSource[i + 2];
         }
 
-        int len = strlen(cTemp);
+        int len = _tcslen(cTemp);
 
         if (len == 3) {
             strEncode += m_Base64_Table[((int)cTemp[0] & 0xFC) >> 2];
@@ -440,7 +440,7 @@ void AES::EncodeBase64(CString& strSource, CString& strOut) {
             strEncode += m_Base64_Table[(int)cTemp[2] & 0x3F];
 
             if (LineLength += 4 >= 76) {
-                strEncode += "\r\n";
+                strEncode += _T("\r\n");
             }
         } else if (len == 2) {
             strEncode += m_Base64_Table[((int)cTemp[0] & 0xFC) >> 2];
@@ -448,19 +448,19 @@ void AES::EncodeBase64(CString& strSource, CString& strOut) {
             strEncode += m_Base64_Table[((int)cTemp[1] & 0x0F) << 2];
 
             if (LineLength += 4 >= 76) {
-                strEncode += "\r\n";
+                strEncode += _T("\r\n");
             }
 
-            strEncode += "=";
+            strEncode += _T("=");
         } else if (len == 1) {
             strEncode += m_Base64_Table[((int)cTemp[0] & 0xFC) >> 2];
             strEncode += m_Base64_Table[((int)cTemp[0] & 0x3) << 4];
 
             if (LineLength += 4 >= 76) {
-                strEncode += "\r\n";
+                strEncode += _T("\r\n");
             }
 
-            strEncode += "==";
+            strEncode += _T("==");
         }
     }
 
@@ -470,12 +470,12 @@ void AES::EncodeBase64(CString& strSource, CString& strOut) {
 void AES::DecodeBase64(CString& strSource, CString& strOut) {
     //返回值
     CString strDecode;
-    char cTemp[5];
+    byte cTemp[5];
 
     int sourceLen = strSource.GetLength();
 
     for (int i = 0; i < sourceLen; i += 4) {
-        memset(cTemp, 0, 5);
+        memset(cTemp, 0, 5 * sizeof(byte));
 
         cTemp[0] = strSource[i];
 
@@ -494,7 +494,7 @@ void AES::DecodeBase64(CString& strSource, CString& strOut) {
         int asc[4];
 
         for (int j = 0; j < 4; j++) {
-            for (int k = 0; k < (int)strlen(m_Base64_Table); k++) {
+            for (int k = 0; k < (int)_tcslen(m_Base64_Table); k++) {
                 if (cTemp[j] == m_Base64_Table[k]) {
                     asc[j] = k;
                 }
@@ -502,14 +502,14 @@ void AES::DecodeBase64(CString& strSource, CString& strOut) {
         }
 
         if ('=' == cTemp[2] && '=' == cTemp[3]) {
-            strDecode += (char)(int)(asc[0] << 2 | asc[1] << 2 >> 6);
+            strDecode += (TCHAR)((int)(asc[0] << 2 | asc[1] << 2 >> 6) & 0xff);
         } else if ('=' == cTemp[3]) {
-            strDecode += (char)(int)(asc[0] << 2 | asc[1] << 2 >> 6);
-            strDecode += (char)(int)(asc[1] << 4 | asc[2] << 2 >> 4);
+            strDecode += (TCHAR)((int)(asc[0] << 2 | asc[1] << 2 >> 6) & 0xff);
+            strDecode += (TCHAR)((int)(asc[1] << 4 | asc[2] << 2 >> 4) & 0xff);
         } else {
-            strDecode += (char)(int)(asc[0] << 2 | asc[1] << 2 >> 6);
-            strDecode += (char)(int)(asc[1] << 4 | asc[2] << 2 >> 4);
-            strDecode += (char)(int)(asc[2] << 6 | asc[3] << 2 >> 2);
+            strDecode += (TCHAR)((int)(asc[0] << 2 | asc[1] << 2 >> 6) & 0xff);
+            strDecode += (TCHAR)((int)(asc[1] << 4 | asc[2] << 2 >> 4) & 0xff);
+            strDecode += (TCHAR)((int)(asc[2] << 6 | asc[3] << 2 >> 2) & 0xff);
         }
     }
 
@@ -518,36 +518,45 @@ void AES::DecodeBase64(CString& strSource, CString& strOut) {
 
 BOOL AES::Encrypt(CString& strIn, CString& strOut) {
 
-    CString strEnc;
-    LPCSTR buf = (LPCSTR)strIn;
-    int len = strIn.GetLength();
+    if (strIn.IsEmpty()) {
+        strOut = strIn;
+
+    } else {
+
+        CString strEnc;
+        LPCTSTR buf = (LPCTSTR)strIn;
+        int len = strIn.GetLength();
 
 
-    while (len > 0) {
-        strEnc += (LPCSTR)Cipher((byte*)buf, min(len, 16), DEFAULT_KEY, KEY_SIZE);
-        len -= 16;
-        buf += 16;
+        while (len > 0) {
+            strEnc += (LPCTSTR)Cipher((byte*)buf, min(len, 16), DEFAULT_KEY, KEY_SIZE);
+            len -= 16;
+            buf += 16;
+        }
+
+        EncodeBase64(strEnc, strOut);
     }
-
-    EncodeBase64(strEnc, strOut);
 
     return TRUE;
 }
 
 BOOL AES::Decrypt(CString& strIn, CString& strOut) {
+    if (strIn.IsEmpty()) {
+        strOut = strIn;
+    } else {
+        CString strDec;
+        DecodeBase64(strIn, strDec);
 
-    CString strDec;
-    DecodeBase64(strIn, strDec);
+        LPCTSTR buf = (LPCTSTR)strDec;
+        int len = strDec.GetLength();
 
-    LPCSTR buf = (LPCSTR)strDec;
-    int len = strDec.GetLength();
+        strOut.Empty();
 
-    strOut.Empty();
-
-    while (len > 0) {
-        strOut += (LPCSTR)InvCipher((byte*)buf, min(len, 16), DEFAULT_KEY, KEY_SIZE);
-        len -= 16;
-        buf += 16;
+        while (len > 0) {
+            strOut += (LPCTSTR)InvCipher((byte*)buf, min(len, 16), DEFAULT_KEY, KEY_SIZE);
+            len -= 16;
+            buf += 16;
+        }
     }
 
     return TRUE;

@@ -54,16 +54,16 @@ void GstPlayer::OnDestroy() {
     return GstPipelineBase::OnDestroy();
 }
 
-const char* GstPlayer::GetPipelineString(const std::map<const char*, const char*>& params) {
-    static const char* const pipeline_str =
-        " appsrc name=vsrc ! "
-        " queue name=pre_v_queue max-size-bytes=0 max-size-buffers=8 max-size-time=0 leaky=0 ! "
-        " colorspace ! {VIDEOSINK} sync=false async=false name=vsink "
-        " appsrc name=asrc ! "
-        " queue name=pre_a_queue max-size-bytes=0 max-size-buffers=25 max-size-time=0 leaky=1 ! "
-        " level message=true interval=100000000 ! "
-        " volume name=vol mute=false volume=0.8 ! audioconvert ! audioresample ! "
-        " {AUDIOSINK} sync=false async=false name=asink ";
+LPCTSTR GstPlayer::GetPipelineString(const std::map<LPCTSTR, LPCTSTR>& params) {
+    static LPCTSTR const pipeline_str = 
+        _T(" appsrc name=vsrc ! ")
+        _T(" queue name=pre_v_queue max-size-bytes=0 max-size-buffers=8 max-size-time=0 leaky=0 ! ")
+        _T(" colorspace ! {VIDEOSINK} sync=false async=false name=vsink ")
+        _T(" appsrc name=asrc ! ")
+        _T(" queue name=pre_a_queue max-size-bytes=0 max-size-buffers=25 max-size-time=0 leaky=1 ! ")
+        _T(" level message=true interval=100000000 ! ")
+        _T(" volume name=vol mute=false volume=0.8 ! audioconvert ! audioresample ! ")
+        _T(" {AUDIOSINK} sync=false async=false name=asink ");
 
     if (!GstPipelineBase::Format(pipeline_str, params, m_strPipelineDesc)) {
         return NULL;
@@ -99,7 +99,7 @@ void GstPlayer::OnSyncGstMessage(GstBus* bus, GstMessage* message) {
             message->structure &&
             gst_structure_has_name(message->structure, "prepare-xwindow-id")) {
         GstElement* element = GST_ELEMENT(GST_MESSAGE_SRC(message));
-        LogInfo(__FILE__, __FUNCTION__, "got prepare-xwindow-id, setting XID %lu", m_hWndId);
+        LogInfo(_T(__FILE__), _T(__FUNCTION__), _T("got prepare-xwindow-id, setting XID %lu"), m_hWndId);
 
         if (g_object_class_find_property(G_OBJECT_GET_CLASS(element),
                                          "force-aspect-ratio")) {

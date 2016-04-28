@@ -3,7 +3,7 @@
 
 class AES {
 private:
-    typedef unsigned char byte;
+    typedef TCHAR byte;
     static const int KEY_SIZE = 16;    //    密钥长度为128位
     static const int N_ROUND = 11;
     byte plainText[17];    //    明文
@@ -40,7 +40,7 @@ protected:
 
 protected:
     //Base64编码解码表
-    char* m_Base64_Table;
+    LPTSTR m_Base64_Table;
     void EncodeBase64(CString& strSource, CString& strOut);
     void DecodeBase64(CString& strSource, CString& strOut);
 

@@ -28,6 +28,8 @@
 #define IDC_CURSOR_SEL                  147
 #define IDI_ICON1                       148
 #define IDI_ICON_DIS                    148
+#define IDD_DIALOG2                     149
+#define IDD_DIALOG_USER_PRESET          149
 #define IDC_COMBO_AUDIO                 1000
 #define IDC_COMBO_VIDEO                 1001
 #define IDC_BUTTON_SELECT_PATH          1002
@@ -38,9 +40,13 @@
 #define IDC_EDIT_USERDOMAIN             1007
 #define IDC_COMBO_PRESET                1008
 #define IDC_BUTTON_AUTO_PRESET          1009
+#define IDC_COMBO_REC_PRESET            1009
+#define IDC_COMBO_SECURITY_POLICY       1010
 #define IDC_RADIO_EXISTING_SESSION      1010
-#define IDC_RADIO_BCE                   1011
-#define IDC_RADIO_RTMP                  1012
+#define IDC_RADIO_RTMP                  1011
+#define IDC_COMBO_SECURITY_POLICY2      1011
+#define IDC_COMBO_REGION                1011
+#define IDC_BUTTON_EDIT_PRESET          1012
 #define IDC_EDIT_RTMP                   1013
 #define IDC_EDIT_SESSION_NAME           1014
 #define IDC_EDIT_HLS_URL                1015
@@ -78,12 +84,15 @@
 #define IDC_EDIT_AK                     1040
 #define IDC_EDIT_SK                     1041
 #define IDC_EDIT_DESC                   1041
+#define IDC_EDIT_PULL_URL               1041
 #define IDC_EDIT_HOST                   1042
+#define IDC_EDIT_DESC2                  1042
 #define IDC_EDIT_BUCKET                 1043
 #define IDC_EDIT_DOMAIN                 1044
 #define IDC_CHECK_PUSH_AUTH             1045
 #define IDC_CHECK1                      1046
 #define IDC_CHECK_VIDEO2                1046
+#define IDC_CHECK_PULL                  1046
 #define IDC_COMBO_NOTIFICATION          1047
 #define IDC_EDIT1                       1047
 #define IDC_EDIT_VIDEO_X                1047
@@ -111,6 +120,8 @@
 #define IDC_BTN_VIDEO_CONFIG2           1057
 #define IDC_COMBO_TYPE                  1057
 #define IDC_STATIC_ICON                 1058
+#define IDC_SYSLINK1                    1060
+#define IDC_SYSLINK2                    1061
 #define IDM_MENU                        32771
 #define IDM_PRESET                      32772
 #define IDM_SESSION                     32773
@@ -124,9 +135,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        149
+#define _APS_NEXT_RESOURCE_VALUE        150
 #define _APS_NEXT_COMMAND_VALUE         32780
-#define _APS_NEXT_CONTROL_VALUE         1060
+#define _APS_NEXT_CONTROL_VALUE         1061
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

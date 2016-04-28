@@ -445,7 +445,7 @@ void CPPM::DrawBack(CDC& memDC, int nWidth, int nHeight) {
 
         CRect rcSingleScale(rcScale.left, 0, rcScale.right, 0), rcLastScale(0, 0, 0, 0);
         int nSingleScale = 0;
-        CString strSingleScale = "" ;
+        CString strSingleScale = _T("") ;
 
         i = 0;
 
@@ -466,7 +466,7 @@ void CPPM::DrawBack(CDC& memDC, int nWidth, int nHeight) {
             }
 
             if (rcSingleScale.top >= rcLastScale.bottom) {
-                strSingleScale.Format("%d", ruler[i]);
+                strSingleScale.Format(_T("%d"), ruler[i]);
                 memDC.DrawText(strSingleScale, rcSingleScale, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
             }
 

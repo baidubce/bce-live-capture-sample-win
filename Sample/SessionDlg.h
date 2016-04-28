@@ -1,15 +1,12 @@
 #pragma once
 #include "afxcmn.h"
 #include <live_capture.h>
+#include "property_grid_helper.h"
+#include "PropertyGridDialog.h"
 
 class CToolsDlg;
-class CMFCPropertyGridCtrl;
-class CMFCPropertyGridProperty;
 
-#include "property_grid_helper.h"
-
-
-class CSessionDlg : public CDialog {
+class CSessionDlg : public CPropertyGridDialog {
     DECLARE_DYNAMIC(CSessionDlg)
 
 public:
@@ -30,8 +27,7 @@ public:
     CString GetSelectedSessionId();
 private:
     CToolsDlg* m_pParent;
-    CMFCPropertyGridCtrl* m_ppgSession;
-    lc_session_list_t* m_pSessionList;
+    lc_list_t m_pSessionList;
     lc_session_t* m_pSelectedSession;
 
     BOOL m_bSelectMode;
@@ -42,19 +38,17 @@ protected:
 
     void OnDeleteSession(lc_session_t* session, HTREEITEM item);
     void OnResumeSession(lc_session_t* session);
-    void OnStopSession(lc_session_t* session);
+    void OnPauseSession(lc_session_t* session);
 
     void UpdateSessionList();
 
     BOOL OnInitDialog();
-    void UpdatePropertyList(lc_session_t* session, BOOL allowEdit);
-    void UpdatePropertyItem(CMFCPropertyGridProperty* pgp, lc_session_t* session,
-                            BOOL allowEdit);
     void UpdateSession(lc_session_t* session);
 
-private:
-    void CreatePropertyGrid();
-    CMFCPropertyGridProperty* CreatePropertyItem(const PropertyItem* pi);
+	BOOL ValidSession(lc_session_t* session);
+protected:
+    virtual void GetPropertyGridRect(LPRECT rc);
+    virtual const PropertyItem* GetPropertyList();
 
 public:
     afx_msg void OnNcDestroy();

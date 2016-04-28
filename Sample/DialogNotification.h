@@ -2,13 +2,11 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 #include <live_capture.h>
-
+#include "property_grid_helper.h"
+#include "PropertyGridDialog.h"
 
 class CToolsDlg;
-class CMFCPropertyGridCtrl;
-class CMFCPropertyGridProperty;
 
-#include "property_grid_helper.h"
 
 typedef enum _tagNOTIFFICATION_MODE {
     NOTIFFICATION_MODE_VIEW,
@@ -17,7 +15,7 @@ typedef enum _tagNOTIFFICATION_MODE {
 
 
 
-class CDialogNotification : public CDialog {
+class CDialogNotification : public CPropertyGridDialog {
     DECLARE_DYNAMIC(CDialogNotification)
 
 public:
@@ -28,28 +26,23 @@ public:
     enum { IDD = IDD_NOTIFICATION };
 private:
     CToolsDlg* m_pParent;
-    CMFCPropertyGridCtrl* m_ppgNotification;
     CButton m_btnMode;
     CButton m_btnCancel;
     NOTIFFICATION_MODE m_eMode;
     CTreeCtrl m_treNotifications;
-    lc_notification_list_t* m_pNotificationList;
+    lc_list_t m_pNotificationList;
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     BOOL OnInitDialog();
     void OnOK();
     void OnCancel();
-    void UpdatePropertyList(lc_notification_t* notification, BOOL allowEdit);
-    void UpdatePropertyItem(CMFCPropertyGridProperty* pgp, lc_notification_t* notification,
-                            BOOL allowEdit);
-    void CreatePropertyGrid();
-    CMFCPropertyGridProperty* CreatePropertyItem(const PropertyItem* pi);
     void UpdateNotificationList();
-    void BuildNotificationFromPropertyList(lc_notification_t* notification);
-    void SavePropertyValue(CMFCPropertyGridProperty* pgp, lc_notification_t* notification);
     void SetMode(NOTIFFICATION_MODE mode);
 
     DECLARE_MESSAGE_MAP()
+
+    virtual void GetPropertyGridRect(LPRECT rc);
+    virtual const PropertyItem* GetPropertyList();
 public:
     afx_msg void OnNcDestroy();
     afx_msg void OnTvnSelchangedTreeNotifications(NMHDR* pNMHDR, LRESULT* pResult);

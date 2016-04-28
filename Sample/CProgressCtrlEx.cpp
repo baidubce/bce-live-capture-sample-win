@@ -326,7 +326,7 @@ void CProgressCtrlEx::OnMouseMove(UINT nFlags, CPoint point) {
     pos = pos < m_nLower ? m_nLower : pos;
 
 
-    CString strTip = "";
+    CString strTip = _T("");
 
     if (FormatToolTip(strTip, pos)) {
         SetToolTip(strTip);

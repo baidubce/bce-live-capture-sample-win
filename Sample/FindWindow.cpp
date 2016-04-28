@@ -51,7 +51,7 @@ void CFindWindow::OnInit() {
     m_hCursor = LoadCursor(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDC_CURSOR_SEL));
     m_wndRect.CreateEx(WS_EX_TOPMOST, 
         AfxRegisterWndClass(CS_VREDRAW | CS_HREDRAW,0,(HBRUSH) ::GetStockObject(BLACK_BRUSH)),
-        "rect", WS_POPUP, CRect(), this, 0);
+        _T("rect"), WS_POPUP, CRect(), this, 0);
 }
 
 // CFindWindow message handlers

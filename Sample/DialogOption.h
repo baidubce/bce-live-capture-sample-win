@@ -32,4 +32,10 @@ public:
     CString m_strAK;
     CString m_strSK;
     CString m_strHost;
+
+    CString m_strAKbak;
+    CString m_strSKbak;
+    CString m_strHostbak;
+    afx_msg void OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnNMClickSyslink2(NMHDR *pNMHDR, LRESULT *pResult);
 };

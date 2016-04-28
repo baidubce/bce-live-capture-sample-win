@@ -15,9 +15,15 @@ BOOL CToolsApp::InitInstance() {
     CWinAppEx::InitInstance();
     AfxEnableControlContainer();
     AfxInitRichEdit2();
+    
     CToolsDlg dlg;
     m_pMainWnd = &dlg;
-    INT_PTR nResponse = dlg.DoModal();
+    dlg.Create(CToolsDlg::IDD, NULL);
+    dlg.UpdateWindow();
+    dlg.ShowWindow(SW_SHOW);
+
+    Run();
+
     lc_deinit();
     return FALSE;
 }
