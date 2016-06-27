@@ -167,6 +167,15 @@ LC_CODE LC_API lc_session_create(lc_session_config_t* cfg, lc_session_t* session
 LC_CODE LC_API lc_session_query(const char* session_id, lc_session_t* session);
 
 /**
+* query session by session id, if auth is on, build token string for push url, hls url and rtmp url; 
+* session_id: the session id to be queried
+* session: a pointer to lc_session_t used to receive session data
+* expire: the date that token will be expired
+* return : error code, LC_OK: success, others: failed
+**/
+LC_CODE LC_API lc_session_query_with_auth(const char* session_id, lc_session_t* session, lc_datetime_t* expire);
+
+/**
 * query all sessions
 * pp_session : a pointer to lc_session_list_t
 * return : error code, LC_OK: success, others: failed

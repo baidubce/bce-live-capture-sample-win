@@ -331,9 +331,18 @@ LC_CODE LC_API lc_unregister_status_callback(lc_handle_t handle, lc_status_callb
 LC_STATUS LC_API lc_get_status(lc_handle_t handle);
 
 /**
-* get play url of the handle
+* get play url of the handle,
+* if play auth is turned on, expire date will be 9999-12-32 23:59:59
 **/
 LC_CODE LC_API lc_query_play_url(lc_handle_t handle, lc_session_play_t* play_url);
+
+
+/**
+* get play url of the handle with the expire date
+* if play auth is not turned on, expire is ignored.
+**/
+LC_CODE LC_API lc_query_play_url_ex(lc_handle_t handle, lc_session_play_t* play_url, lc_datetime_t* expire);
+
 
 /**
 * start live capture,

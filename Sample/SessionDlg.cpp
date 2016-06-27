@@ -91,16 +91,16 @@ void CSessionDlg::OnBnClickedButtonClose() {
 }
 
 BOOL CSessionDlg::ValidSession(lc_session_t* session) {
-	if (session && session->config.security_policy[0]) {
-		lc_security_policy_t policy = {0};
-		lc_security_policy_query(&session->config.security_policy[0], &policy);
-		if (policy.auth.play || policy.auth.push) {
-			MessageBox(_T("暂时不支持播放认证和推流认证"));
-			lc_security_policy_free(&policy);
-			return FALSE;
-		}
-		lc_security_policy_free(&policy);
-	}
+	//if (session && session->config.security_policy[0]) {
+	//	lc_security_policy_t policy = {0};
+	//	lc_security_policy_query(&session->config.security_policy[0], &policy);
+	//	if (policy.auth.play || policy.auth.push) {
+	//		MessageBox(_T("暂时不支持播放认证和推流认证"));
+	//		lc_security_policy_free(&policy);
+	//		return FALSE;
+	//	}
+	//	lc_security_policy_free(&policy);
+	//}
 	return TRUE;
 }
 
